@@ -1,5 +1,6 @@
 use crate::data_structs::{Context, Error};
-use poise::serenity_prelude as serenity;
+use ::serenity::all::ChannelId;
+use poise::{serenity_prelude as serenity, CreateReply};
 
 /// Displays your or another user's account creation date
 #[poise::command(slash_command, prefix_command)]
@@ -17,6 +18,7 @@ pub async fn age(
 #[poise::command(slash_command, prefix_command)]
 pub async fn poker(
     ctx: Context<'_>,
+
     #[description = "Points (1-10)"] points: u32,
     #[description = "User (mention or ID)"] user: Option<serenity::User>,
 ) -> Result<(), Error> {
@@ -28,13 +30,27 @@ pub async fn poker(
 
     // Get the target user (default to the author if not specified)
     let target_user = user.unwrap_or_else(|| ctx.author().clone());
-
+    let thread_id: u64 = 1214415914196533308;
     // Respond with the chosen points and the target user
-    let response = format!("You selected {} points for {}!", points, target_user.name);
-    ctx.say(response).await?;
+    let response = format!(
+        "You selected {} points for {}!, id: {}",
+        points, target_user.name, target_user.id
+    );
+    // ctx.say(response).await?;
+    let channel_id = ChannelId::new(thread_id.into());
 
-    // Execute additional actions (e.g., timeout, alert, etc.) based on the points if needed
-    // For example, if points are 5 or more, give a timeout of 5 seconds
+    channel_id.say(&ctx.http(), response).await?;
+    ctx.send(CreateReply {
+        content: Some(thread_id.to_string()),
+        embeds: vec![],
+        attachments: vec![],
+        ephemeral: None,
+        components: None,
+        allowed_mentions: None,
+        reply: true,
+        __non_exhaustive: (),
+    })
+    .await?;
 
     Ok(())
 }
