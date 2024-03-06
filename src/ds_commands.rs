@@ -1,6 +1,6 @@
 use crate::{
-    data_structs::{Context, Error},
-    table_users::{create_or_sum, update_amount},
+    data_structs::{Context, Error, ResponseStatus},
+    table_users::{create_or_sum, get_top, update_amount},
 };
 use ::serenity::all::{ChannelId, GetMessages};
 use poise::{serenity_prelude as serenity, CreateReply};
@@ -55,7 +55,7 @@ pub async fn poker(
     let _ = create_or_sum(&target_user.name, esto, points as i64);
     channel_id.say(&ctx.http(), response).await?;
     ctx.send(CreateReply {
-        content: Some(format!("Points to: {}", ctx.author())),
+        content: Some(format!("Points to: {}", target_user.name)),
         embeds: vec![],
         attachments: vec![],
         ephemeral: Some(true),
@@ -78,7 +78,7 @@ pub async fn poker_discount(
     // Validate points
     if points < 1 || points > 10 {
         ctx.send(CreateReply {
-            content: format!("Please choose points between 1 and 10.").into(),
+            content: format!("Please choose how much points discount.").into(),
             embeds: vec![],
             attachments: vec![],
             ephemeral: Some(true),
@@ -106,7 +106,7 @@ pub async fn poker_discount(
     let _ = update_amount(esto, points as i64);
     channel_id.say(&ctx.http(), response).await?;
     ctx.send(CreateReply {
-        content: Some(format!("Points discounted to: {}", ctx.author())),
+        content: Some(format!("Points discounted to: {}", target_user.name)),
         embeds: vec![],
         attachments: vec![],
         ephemeral: Some(true),
@@ -122,7 +122,7 @@ pub async fn poker_discount(
 
 #[poise::command(slash_command, prefix_command)]
 pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
-    let builder = GetMessages::default().limit(10);
+    let builder = GetMessages::default().limit(100);
     let algo = ctx.channel_id();
     let msgs = algo.messages(ctx, builder).await?;
 
@@ -148,6 +148,28 @@ pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
         __non_exhaustive: (),
     })
     .await?;
+
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command)]
+pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
+    match get_top() {
+        Ok(response) => {
+            let _ = poise::say_reply(ctx, &serde_json::to_string(&response).unwrap()).await;
+        }
+        Err(err) => {
+            let _ = poise::say_reply(
+                ctx,
+                &serde_json::to_string(&ResponseStatus {
+                    success: false,
+                    error_message: Some(err.to_string()),
+                })
+                .unwrap(),
+            )
+            .await;
+        }
+    }
 
     Ok(())
 }

@@ -9,8 +9,24 @@ pub fn setup_database() -> Result<Connection> {
         user_id INTEGER NOT NULL UNIQUE,
         points INTEGER,
         created_at TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);",
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+        CREATE TABLE IF NOT EXISTS top_10 (
+            id INTEGER PRIMARY KEY,
+            user_id INTEGER NOT NULL UNIQUE,
+            FOREIGN KEY(user_id) REFERENCES users(user_id)
+        );",
     )?;
+    for i in 1..=10 {
+        let user_name = format!("User{}", i);
+        let user_id = i.to_string();
+        let points: i64 = 1000 - i * 50; // Just an example for points calculation
+
+        conn.execute(
+            "INSERT INTO users (user_name, user_id, points,created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
+            &[&user_name, &user_id, &points.to_string()],
+        )?;
+    }
+
     conn.is_autocommit();
     println!("DB config check");
     Ok(conn)
