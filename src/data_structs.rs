@@ -4,3 +4,9 @@ pub struct Data {} // User data, which is stored and accessible in all command i
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 pub type Context<'a> = poise::Context<'a, Data, Error>;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ResponseStatus {
+    pub success: bool,
+    pub error_message: Option<String>,
+}

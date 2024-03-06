@@ -1,5 +1,5 @@
 use crate::data_structs::{Context, Error};
-use ::serenity::all::ChannelId;
+use ::serenity::all::{ChannelId, GetMessages};
 use poise::{serenity_prelude as serenity, CreateReply};
 
 /// Displays your or another user's account creation date
@@ -24,7 +24,17 @@ pub async fn poker(
 ) -> Result<(), Error> {
     // Validate points
     if points < 1 || points > 10 {
-        ctx.say("Please choose points between 1 and 10.").await?;
+        ctx.send(CreateReply {
+            content: format!("Please choose points between 1 and 10.").into(),
+            embeds: vec![],
+            attachments: vec![],
+            ephemeral: Some(true),
+            components: None,
+            allowed_mentions: None,
+            reply: false,
+            __non_exhaustive: (),
+        })
+        .await?;
         return Ok(());
     }
 
@@ -41,13 +51,45 @@ pub async fn poker(
 
     channel_id.say(&ctx.http(), response).await?;
     ctx.send(CreateReply {
-        content: Some(thread_id.to_string()),
+        content: Some(format!("Points to: {}", ctx.author())),
         embeds: vec![],
         attachments: vec![],
-        ephemeral: None,
+        ephemeral: Some(true),
         components: None,
         allowed_mentions: None,
-        reply: true,
+        reply: false,
+        __non_exhaustive: (),
+    })
+    .await?;
+
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command)]
+pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
+    let builder = GetMessages::default().limit(10);
+    let algo = ctx.channel_id();
+    let msgs = algo.messages(ctx, builder).await?;
+
+    for msg in msgs {
+        match msg.delete(&ctx.http()).await {
+            Ok(_) => {}
+            Err(why) => {
+                let reply_after = CreateReply::default()
+                    .content(format!("{why:?}"))
+                    .ephemeral(true);
+                ctx.send(reply_after).await?;
+            }
+        }
+    }
+    ctx.send(CreateReply {
+        content: Some(format!("Deleted messages in channel: {algo:?}")),
+        embeds: vec![],
+        attachments: vec![],
+        ephemeral: Some(true),
+        components: None,
+        allowed_mentions: None,
+        reply: false,
         __non_exhaustive: (),
     })
     .await?;
