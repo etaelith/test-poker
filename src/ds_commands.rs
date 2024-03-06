@@ -121,6 +121,29 @@ pub async fn poker_discount(
 }
 
 #[poise::command(slash_command, prefix_command)]
+pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
+    match get_top() {
+        Ok(response) => {
+            let _ = poise::say_reply(ctx, &serde_json::to_string(&response).unwrap()).await;
+        }
+        Err(err) => {
+            let _ = poise::say_reply(
+                ctx,
+                &serde_json::to_string(&ResponseStatus {
+                    success: false,
+                    success_description: None,
+                    error_message: Some(err.to_string()),
+                })
+                .unwrap(),
+            )
+            .await;
+        }
+    }
+
+    Ok(())
+}
+
+#[poise::command(slash_command, prefix_command)]
 pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
     let builder = GetMessages::default().limit(100);
     let algo = ctx.channel_id();
@@ -148,28 +171,6 @@ pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
         __non_exhaustive: (),
     })
     .await?;
-
-    Ok(())
-}
-
-#[poise::command(slash_command, prefix_command)]
-pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
-    match get_top() {
-        Ok(response) => {
-            let _ = poise::say_reply(ctx, &serde_json::to_string(&response).unwrap()).await;
-        }
-        Err(err) => {
-            let _ = poise::say_reply(
-                ctx,
-                &serde_json::to_string(&ResponseStatus {
-                    success: false,
-                    error_message: Some(err.to_string()),
-                })
-                .unwrap(),
-            )
-            .await;
-        }
-    }
 
     Ok(())
 }

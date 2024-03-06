@@ -28,11 +28,11 @@ pub fn create_or_sum(
                     params![chips, id_user],
                 ) {
                     Ok(_) => Ok(ResponseStatus {
-                        success: true,
+                        success: true,                        success_description: None,
                         error_message: None,
                     }),
                     Err(err) => Ok(ResponseStatus {
-                        success: false,
+                        success: false,                        success_description: None,
                         error_message: Some(err.to_string()),
                     }),
                 }
@@ -43,11 +43,11 @@ pub fn create_or_sum(
                     params![id_user, tag_user, chips],
                 ) {
                     Ok(_) => Ok(ResponseStatus {
-                        success: true,
+                        success: true,                        success_description: None,
                         error_message: None,
                     }),
                     Err(err) => Ok(ResponseStatus {
-                        success: false,
+                        success: false,                        success_description: None,
                         error_message: Some(err.to_string()),
                     }),
                 }
@@ -66,10 +66,12 @@ pub fn update_amount(tag_user: i64, chips: i64) -> Result<ResponseStatus, rusqli
             ) {
                 Ok(_) => Ok(ResponseStatus {
                     success: true,
+                    success_description: None,
                     error_message: None,
                 }),
                 Err(err) => Ok(ResponseStatus {
                     success: false,
+                    success_description: None,
                     error_message: Some(err.to_string()),
                 }),
             }
@@ -90,14 +92,26 @@ pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
             let users_data: Result<Vec<(String, i32)>, rusqlite::Error> = statement
                 .query_map(params![], |row| {
                     Ok((row.get::<_, String>(0)?, row.get::<_, i32>(1)?))
-                })?
-                .collect();
-
-            println!("Datos users: {:?}", users_data);
-            Ok(ResponseStatus {
-                success: true,
-                error_message: None,
-            })
+                })
+                .and_then(|mapped_rows| mapped_rows.collect());
+            match users_data {
+                Ok(data) => {
+                    println!("Datos users: {:?}", data);
+                    Ok(ResponseStatus {
+                        success: true,
+                        success_description: Some(serde_json::to_string(&data).unwrap()),
+                        error_message: None,
+                    })
+                }
+                Err(err) => {
+                    eprintln!("Error al obtener datos de usuarios: {:?}", err);
+                    Ok(ResponseStatus {
+                        success: false,
+                        success_description: None,
+                        error_message: Some(err.to_string()),
+                    })
+                }
+            }
         }
         Err(conn_err) => Err(conn_err),
     }
