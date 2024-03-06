@@ -4,18 +4,21 @@ mod discord_handler;
 mod ds_commands;
 mod table_users;
 use data_structs::Data;
+use db_config::setup_database;
 use discord_handler::Handler;
-use ds_commands::{age, borrar, poker};
+use ds_commands::{age, borrar, poker, poker_discount};
 use poise::serenity_prelude as serenity;
 
 #[tokio::main]
 async fn main() {
+    let _ = setup_database();
+
     let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
     let intents: ::serenity::prelude::GatewayIntents = serenity::GatewayIntents::non_privileged();
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![age(), poker(), borrar()], // Add the poker command
+            commands: vec![age(), poker(), borrar(), poker_discount()], // Add the poker command
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {

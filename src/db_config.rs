@@ -5,13 +5,14 @@ pub fn setup_database() -> Result<Connection> {
     conn.execute_batch(
         "CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
-        user_id INTEGER NOT NULL UNIQUE,
         user_name TEXT NOT NULL,
+        user_id INTEGER NOT NULL UNIQUE,
         points INTEGER,
         created_at TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);",
     )?;
     conn.is_autocommit();
+    println!("DB config check");
     Ok(conn)
 }
 
