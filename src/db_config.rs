@@ -10,11 +10,7 @@ pub fn setup_database() -> Result<Connection> {
         points INTEGER,
         created_at TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
-        CREATE TABLE IF NOT EXISTS top_10 (
-            id INTEGER PRIMARY KEY,
-            user_id INTEGER NOT NULL UNIQUE,
-            FOREIGN KEY(user_id) REFERENCES users(user_id)
-        );",
+      ",
     )?;
     for i in 1..=10 {
         let user_name = format!("User{}", i);

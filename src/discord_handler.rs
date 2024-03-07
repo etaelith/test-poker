@@ -1,7 +1,5 @@
-use ::serenity::model::event::ResumedEvent;
-use ::serenity::model::gateway::Ready;
-use ::serenity::prelude::*;
-use serenity::async_trait;
+use poise::serenity_prelude::model::{event::ResumedEvent, gateway::Ready};
+use poise::serenity_prelude::{async_trait, Context, EventHandler};
 
 pub struct Handler;
 

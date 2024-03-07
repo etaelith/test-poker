@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 tokio = {version = "1.36.0", features = ["macros","rt-multi-thread"]}
-serenity = {default-features = false, features = ["client", "gateway","model","rustls_backend"], version ="0.12.1"}
+serenity = {default-features = false, features = ["model"], version ="0.12.1"}
 poise = "0.6.1"
 postgres = "0.19"
 serde = "1.0"

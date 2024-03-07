@@ -1,24 +1,26 @@
 mod data_structs;
 mod db_config;
+mod discord_commands;
 mod discord_handler;
-mod ds_commands;
 mod table_users;
 use data_structs::Data;
 use db_config::setup_database;
+use discord_commands::{borrar, poker, poker_discount, poker_top};
 use discord_handler::Handler;
-use ds_commands::{age, borrar, poker, poker_discount, poker_top};
-use poise::serenity_prelude as serenity;
+use poise::serenity_prelude::{
+    client::ClientBuilder, prelude::GatewayIntents as serenityGI, GatewayIntents,
+};
 
 #[tokio::main]
 async fn main() {
     let _ = setup_database();
 
     let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
-    let intents: ::serenity::prelude::GatewayIntents = serenity::GatewayIntents::non_privileged();
+    let intents: serenityGI = GatewayIntents::non_privileged();
 
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![age(), poker(), borrar(), poker_discount(), poker_top()], // Add the poker command
+            commands: vec![poker(), borrar(), poker_discount(), poker_top()], // Add the poker command
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
@@ -29,7 +31,7 @@ async fn main() {
         })
         .build();
 
-    let client = serenity::ClientBuilder::new(token, intents)
+    let client = ClientBuilder::new(token, intents)
         .event_handler(Handler)
         .framework(framework)
         .await;

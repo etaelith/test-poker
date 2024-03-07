@@ -1,6 +1,9 @@
 use rusqlite::{params, Result};
 
-use crate::{data_structs::ResponseStatus, db_config::connect_database};
+use crate::{
+    data_structs::{ResponseStatus, TopTen},
+    db_config::connect_database,
+};
 
 pub fn create_or_sum(
     tag_user: &str,
@@ -88,10 +91,15 @@ pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
                 Ok(stmt) => stmt,
                 Err(err) => return Err(err),
             };
-
-            let users_data: Result<Vec<(String, i32)>, rusqlite::Error> = statement
+            let mut position_counter = 0;
+            let users_data: Result<Vec<TopTen>, rusqlite::Error> = statement
                 .query_map(params![], |row| {
-                    Ok((row.get::<_, String>(0)?, row.get::<_, i32>(1)?))
+                    position_counter += 1;
+                    Ok(TopTen {
+                        name: row.get(0)?,
+                        position: position_counter,
+                        points: row.get(1)?,
+                    })
                 })
                 .and_then(|mapped_rows| mapped_rows.collect());
             match users_data {

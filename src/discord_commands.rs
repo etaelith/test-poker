@@ -1,15 +1,15 @@
 use crate::{
-    data_structs::{Context, Error, ResponseStatus},
+    data_structs::{Context, Error, ResponseStatus, TopTen},
     table_users::{create_or_sum, get_top, update_amount},
 };
-use ::serenity::all::{ChannelId, GetMessages};
-use poise::{serenity_prelude as serenity, CreateReply};
-
+use poise::{command, say_reply, serenity_prelude::User, CreateReply};
+use serenity::builder::GetMessages;
+use serenity::model::id::ChannelId;
 /// Displays your or another user's account creation date
-#[poise::command(slash_command, prefix_command)]
+#[command(slash_command, prefix_command)]
 pub async fn age(
     ctx: Context<'_>,
-    #[description = "Selected user"] user: Option<serenity::User>,
+    #[description = "Selected user"] user: Option<User>,
 ) -> Result<(), Error> {
     let u = user.as_ref().unwrap_or_else(|| ctx.author());
     let response = format!("{}'s account was created at {}", u.id, u.created_at());
@@ -18,17 +18,17 @@ pub async fn age(
 }
 
 /// Custom poker command
-#[poise::command(slash_command, prefix_command)]
+#[command(slash_command, prefix_command)]
 pub async fn poker(
     ctx: Context<'_>,
 
-    #[description = "Points (1-10)"] points: u32,
-    #[description = "User (mention or ID)"] user: Option<serenity::User>,
+    #[description = "Points (1-100)"] points: u32,
+    #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
     // Validate points
-    if points < 1 || points > 10 {
+    if points < 1 || points > 100 {
         ctx.send(CreateReply {
-            content: format!("Please choose points between 1 and 10.").into(),
+            content: format!("Please choose points between 1 and 100.").into(),
             embeds: vec![],
             attachments: vec![],
             ephemeral: Some(true),
@@ -68,15 +68,15 @@ pub async fn poker(
 
     Ok(())
 }
-#[poise::command(slash_command, prefix_command)]
+#[command(slash_command, prefix_command)]
 pub async fn poker_discount(
     ctx: Context<'_>,
 
-    #[description = "Points discount (1-10)"] points: u32,
-    #[description = "User (mention or ID)"] user: Option<serenity::User>,
+    #[description = "Points discount (1-100)"] points: u32,
+    #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
     // Validate points
-    if points < 1 || points > 10 {
+    if points < 1 || points > 100 {
         ctx.send(CreateReply {
             content: format!("Please choose how much points discount.").into(),
             embeds: vec![],
@@ -120,34 +120,44 @@ pub async fn poker_discount(
     Ok(())
 }
 
-#[poise::command(slash_command, prefix_command)]
+#[command(slash_command, prefix_command)]
 pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
     match get_top() {
         Ok(response) => {
-            let _ = poise::say_reply(ctx, &serde_json::to_string(&response).unwrap()).await;
+            if let Some(success_description) = response.success_description {
+                let success_description_str: &str = &success_description;
+                let top_ten: Vec<TopTen> =
+                    serde_json::from_str(success_description_str).unwrap_or_default();
+
+                let mut message = String::from("Posiciones:\n");
+                for user in &top_ten {
+                    message.push_str(&format!(
+                        "{}. {}, Puntos: {}\n",
+                        user.position, user.name, user.points
+                    ));
+                }
+                let _ = say_reply(ctx, &message).await;
+            }
         }
         Err(err) => {
-            let _ = poise::say_reply(
-                ctx,
-                &serde_json::to_string(&ResponseStatus {
-                    success: false,
-                    success_description: None,
-                    error_message: Some(err.to_string()),
-                })
-                .unwrap(),
-            )
-            .await;
+            let error_response = ResponseStatus {
+                success: false,
+                success_description: None,
+                error_message: Some(err.to_string()),
+            };
+
+            let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
         }
     }
 
     Ok(())
 }
 
-#[poise::command(slash_command, prefix_command)]
+#[command(slash_command, prefix_command)]
 pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
     let builder = GetMessages::default().limit(100);
-    let algo = ctx.channel_id();
-    let msgs = algo.messages(ctx, builder).await?;
+    let channel_id = ctx.channel_id();
+    let msgs = channel_id.messages(ctx, builder).await?;
 
     for msg in msgs {
         match msg.delete(&ctx.http()).await {
@@ -161,7 +171,7 @@ pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
         }
     }
     ctx.send(CreateReply {
-        content: Some(format!("Deleted messages in channel: {algo:?}")),
+        content: Some(format!("Deleted messages in channel: {channel_id:?}")),
         embeds: vec![],
         attachments: vec![],
         ephemeral: Some(true),
