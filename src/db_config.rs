@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Result};
 
 pub fn setup_database() -> Result<Connection> {
-    let conn = Connection::open("my_database.db")?;
+    let conn = Connection::open("/app/data/my_database.db")?;
     conn.execute_batch(
         "CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
@@ -29,7 +29,7 @@ pub fn setup_database() -> Result<Connection> {
 }
 
 pub fn connect_database() -> Result<Connection> {
-    match Connection::open("my_database.db") {
+    match Connection::open("/app/data/my_database.db") {
         Ok(conn) => {
             println!("Connexion a la base de datos establecida con exito.");
             Ok(conn)
