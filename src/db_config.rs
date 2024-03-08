@@ -15,7 +15,7 @@ pub fn setup_database() -> Result<Connection> {
     for i in 1..=10 {
         let user_name = format!("User{}", i);
         let user_id = i.to_string();
-        let points: i64 = 1000 - i * 50; // Just an example for points calculation
+        let points: i64 = 1000 - i * 50;
 
         conn.execute(
             "INSERT INTO users (user_name, user_id, points,created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
@@ -30,10 +30,7 @@ pub fn setup_database() -> Result<Connection> {
 
 pub fn connect_database() -> Result<Connection> {
     match Connection::open("/app/data/my_database.db") {
-        Ok(conn) => {
-            println!("Connexion a la base de datos establecida con exito.");
-            Ok(conn)
-        }
+        Ok(conn) => Ok(conn),
         Err(err) => {
             eprintln!("Error al abrir la conextion a la base de datos: {:?}", err);
             Err(err)

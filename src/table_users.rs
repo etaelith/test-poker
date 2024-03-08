@@ -105,7 +105,6 @@ pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
                 .and_then(|mapped_rows| mapped_rows.collect());
             match users_data {
                 Ok(data) => {
-                    println!("Datos users: {:?}", data);
                     Ok(ResponseStatus {
                         success: true,
                         success_description: Some(serde_json::to_string(&data).unwrap()),
