@@ -3,7 +3,6 @@ use crate::{
     table_users::{create_or_sum, get_top, update_amount},
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
-use serenity::builder::GetMessages;
 use serenity::model::id::ChannelId;
 /// Displays your or another user's account creation date
 #[command(slash_command, prefix_command)]
@@ -149,38 +148,6 @@ pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
             let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
         }
     }
-
-    Ok(())
-}
-
-#[command(slash_command, prefix_command)]
-pub async fn borrar(ctx: Context<'_>) -> Result<(), Error> {
-    let builder = GetMessages::default().limit(100);
-    let channel_id = ctx.channel_id();
-    let msgs = channel_id.messages(ctx, builder).await?;
-
-    for msg in msgs {
-        match msg.delete(&ctx.http()).await {
-            Ok(_) => {}
-            Err(why) => {
-                let reply_after = CreateReply::default()
-                    .content(format!("{why:?}"))
-                    .ephemeral(true);
-                ctx.send(reply_after).await?;
-            }
-        }
-    }
-    ctx.send(CreateReply {
-        content: Some(format!("Deleted messages in channel: {channel_id:?}")),
-        embeds: vec![],
-        attachments: vec![],
-        ephemeral: Some(true),
-        components: None,
-        allowed_mentions: None,
-        reply: false,
-        __non_exhaustive: (),
-    })
-    .await?;
 
     Ok(())
 }
