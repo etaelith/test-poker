@@ -1,14 +1,38 @@
 mod data_structs;
-mod db_config;
-mod discord_commands;
-mod discord_handler;
-mod table_users;
+
+mod db {
+    pub mod config;
+    pub mod table_rewardp;
+    pub mod table_tournaments;
+    pub mod table_users;
+    pub mod utils;
+}
+
+mod discord {
+    pub mod handler;
+    pub mod commands {
+        pub mod points;
+        pub mod poker;
+        pub mod tournaments;
+    }
+}
 use data_structs::Data;
-use db_config::setup_database;
-use discord_commands::{poker, poker_discount, poker_search, poker_top};
-use discord_handler::Handler;
-use poise::serenity_prelude::{
-    client::ClientBuilder, prelude::GatewayIntents as serenityGI, GatewayIntents,
+use db::config::setup_database;
+use discord::{
+    commands::{
+        points::{poker, poker_discount},
+        poker::{poker_search, poker_top},
+        tournaments::create_tournament,
+    },
+    handler::Handler,
+};
+
+use poise::{
+    builtins,
+    serenity_prelude::{
+        client::ClientBuilder, prelude::GatewayIntents as serenityGI, GatewayIntents,
+    },
+    Framework, FrameworkOptions,
 };
 
 #[tokio::main]
@@ -18,14 +42,20 @@ async fn main() {
     let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
     let intents: serenityGI = GatewayIntents::non_privileged();
 
-    let framework = poise::Framework::builder()
-        .options(poise::FrameworkOptions {
-            commands: vec![poker(), poker_discount(), poker_top(), poker_search()], // Add the poker command
+    let framework = Framework::builder()
+        .options(FrameworkOptions {
+            commands: vec![
+                poker(),
+                poker_discount(),
+                poker_top(),
+                poker_search(),
+                create_tournament(),
+            ],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
-                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                builtins::register_globally(ctx, &framework.options().commands).await?;
                 Ok(Data {})
             })
         })

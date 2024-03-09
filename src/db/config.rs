@@ -11,6 +11,32 @@ pub fn setup_database() -> Result<Connection> {
         bitmex BOOLEAN DEFAULT 0,
         created_at TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+
+        CREATE TABLE IF NOT EXISTS tournaments (
+            tournament_id INTEGER PRIMARY KEY,
+            tournament_date DATE NOT NULL,
+            bounties INTEGER
+        );
+
+        CREATE TABLE IF NOT EXISTS bounties (
+            bounty_id INTEGER PRIMARY KEY,
+            bounty_winner BOOLEAN DEFAULT 0,
+            bounty_date DATE NOT NULL,
+            user_id INTEGER,
+            tournament_id INTEGER,
+            FOREIGN KEY(user_id) REFERENCES users(user_id),
+            FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_id)
+        );
+
+        CREATE TABLE IF NOT EXISTS rewardp (
+            id INTEGER PRIMARY KEY,
+            tournament_id INTEGER,
+            user_id INTEGER,
+            points INTEGER,
+            FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_id),
+            FOREIGN KEY(user_id) REFERENCES users(user_id)
+          );
+
       ",
     )?;
     for i in 1..=10 {

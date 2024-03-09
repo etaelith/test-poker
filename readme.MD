@@ -4,7 +4,9 @@ This project is a Dockerized Discord bot written in Rust, designed to keep track
 
 To learn more about the technologies used in this project, you can check out the following documentation:
 
-## Tech Stack
+## Discord Commands
+
+### Tech Stack
 
 - [Rust](https://www.rust-lang.org/)
 - [Docker](https://www.docker.com/)
