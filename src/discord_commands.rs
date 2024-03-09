@@ -1,20 +1,8 @@
 use crate::{
     data_structs::{Context, Error, ResponseStatus, TopTen},
-    table_users::{create_or_sum, get_top, update_amount},
+    table_users::{create_or_sum, get_top, get_user_rank, update_amount},
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
-use serenity::model::id::ChannelId;
-/// Displays your or another user's account creation date
-#[command(slash_command, prefix_command)]
-pub async fn age(
-    ctx: Context<'_>,
-    #[description = "Selected user"] user: Option<User>,
-) -> Result<(), Error> {
-    let u = user.as_ref().unwrap_or_else(|| ctx.author());
-    let response = format!("{}'s account was created at {}", u.id, u.created_at());
-    ctx.say(response).await?;
-    Ok(())
-}
 
 /// Custom poker command
 #[command(slash_command, prefix_command)]
@@ -40,19 +28,10 @@ pub async fn poker(
         return Ok(());
     }
 
-    // Get the target user (default to the author if not specified)
     let target_user = user.unwrap_or_else(|| ctx.author().clone());
-    let thread_id: u64 = 1214415914196533308;
-    // Respond with the chosen points and the target user
-    let response = format!(
-        "You selected {} points for {}!, id: {}",
-        points, target_user.name, target_user.id
-    );
-    // ctx.say(response).await?;
-    let channel_id = ChannelId::new(thread_id.into());
-    let esto = i64::from(target_user.id);
-    let _ = create_or_sum(&target_user.name, esto, points as i64);
-    channel_id.say(&ctx.http(), response).await?;
+
+    let user_id = i64::from(target_user.id);
+    let _ = create_or_sum(&target_user.name, user_id, points as i64);
     ctx.send(CreateReply {
         content: Some(format!("Points to: {}", target_user.name)),
         embeds: vec![],
@@ -64,7 +43,6 @@ pub async fn poker(
         __non_exhaustive: (),
     })
     .await?;
-
     Ok(())
 }
 #[command(slash_command, prefix_command)]
@@ -89,21 +67,12 @@ pub async fn poker_discount(
         .await?;
         return Ok(());
     }
-
-    // Get the target user (default to the author if not specified)
     let target_user = user.unwrap_or_else(|| ctx.author().clone());
-    let thread_id: u64 = 1214415914196533308;
-    // Respond with the chosen points and the target user
-    let response = format!(
-        "You selected {} points for {}!, id: {}",
-        points, target_user.name, target_user.id
-    );
-    let esto = i64::from(target_user.id);
 
-    // ctx.say(response).await?;
-    let channel_id = ChannelId::new(thread_id.into());
-    let _ = update_amount(esto, points as i64);
-    channel_id.say(&ctx.http(), response).await?;
+    let user_id = i64::from(target_user.id);
+
+    let _ = update_amount(user_id, points as i64);
+
     ctx.send(CreateReply {
         content: Some(format!("Points discounted to: {}", target_user.name)),
         embeds: vec![],
@@ -135,7 +104,18 @@ pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
                         user.position, user.name, user.points
                     ));
                 }
-                let _ = say_reply(ctx, &message).await;
+                //let _ = say_reply(ctx, &message).await;
+                let reply = CreateReply {
+                    content: Some(message.clone()),
+                    embeds: vec![],
+                    attachments: vec![],
+                    ephemeral: Some(true),
+                    components: None,
+                    allowed_mentions: None,
+                    reply: false,
+                    __non_exhaustive: (),
+                };
+                let _ = ctx.send(reply).await;
             }
         }
         Err(err) => {
@@ -149,5 +129,43 @@ pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
         }
     }
 
+    Ok(())
+}
+
+#[command(slash_command, prefix_command)]
+pub async fn poker_search(
+    ctx: Context<'_>,
+    #[description = "User (mention or ID)"] user: Option<User>,
+) -> Result<(), Error> {
+    let target_user = user.unwrap_or_else(|| ctx.author().clone());
+
+    let user_id = target_user.id.into();
+    let _ = get_user_rank(&target_user.name, user_id);
+
+    match get_user_rank(&target_user.name, user_id) {
+        Ok(response) => {
+            if let Some(success_description) = response.success_description {
+                let reply = CreateReply {
+                    content: Some(success_description.clone()),
+                    embeds: vec![],
+                    attachments: vec![],
+                    ephemeral: Some(true),
+                    components: None,
+                    allowed_mentions: None,
+                    reply: false,
+                    __non_exhaustive: (),
+                };
+                let _ = ctx.send(reply).await;
+            }
+        }
+        Err(err) => {
+            let error_response = ResponseStatus {
+                success: false,
+                success_description: None,
+                error_message: Some(err.to_string()),
+            };
+            let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
+        }
+    }
     Ok(())
 }

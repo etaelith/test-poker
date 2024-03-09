@@ -1,13 +1,14 @@
 use rusqlite::{Connection, Result};
 
 pub fn setup_database() -> Result<Connection> {
-    let conn = Connection::open("/app/data/my_database.db")?;
+    let conn = Connection::open(std::env::var("DB_PATH").expect("missing DISCORD_TOKEN"))?;
     conn.execute_batch(
         "CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,
         user_name TEXT NOT NULL,
         user_id INTEGER NOT NULL UNIQUE,
         points INTEGER,
+        bitmex BOOLEAN DEFAULT 0,
         created_at TIMESTAMP,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
       ",
@@ -29,7 +30,7 @@ pub fn setup_database() -> Result<Connection> {
 }
 
 pub fn connect_database() -> Result<Connection> {
-    match Connection::open("/app/data/my_database.db") {
+    match Connection::open(std::env::var("DB_PATH").expect("missing DB_PATH")) {
         Ok(conn) => Ok(conn),
         Err(err) => {
             eprintln!("Error al abrir la conextion a la base de datos: {:?}", err);

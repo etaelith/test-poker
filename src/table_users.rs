@@ -1,5 +1,6 @@
 use rusqlite::{params, Result};
 
+
 use crate::{
     data_structs::{ResponseStatus, TopTen},
     db_config::connect_database,
@@ -60,13 +61,13 @@ pub fn create_or_sum(
         Err(conn_err) => Err(conn_err),
     }
 }
-pub fn update_amount(tag_user: i64, chips: i64) -> Result<ResponseStatus, rusqlite::Error> {
+pub fn update_amount(user_id: i64, chips: i64) -> Result<ResponseStatus, rusqlite::Error> {
     let conn = connect_database();
     match conn {
         Ok(conn) => {
             match conn.execute(
                 "UPDATE users SET points = points - ?1 WHERE user_id = ?2",
-                params![chips, tag_user],
+                params![chips, user_id],
             ) {
                 Ok(_) => Ok(ResponseStatus {
                     success: true,
@@ -124,3 +125,47 @@ pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
         Err(conn_err) => Err(conn_err),
     }
 }
+
+pub fn get_user_rank(tag_user:&str, id_user: i64) -> Result<ResponseStatus, rusqlite::Error>{
+    let conn = connect_database();
+    match conn {
+        Ok(conn) => {
+            
+            let mut stmt = conn.prepare("SELECT EXISTS(SELECT 1 FROM users WHERE user_id = ?1)")?;
+            let exists: bool = stmt.query_row(params![id_user], |row| row.get(0))?;
+
+            if exists {
+                let mut stmt = conn.prepare("SELECT points, (SELECT COUNT(*) FROM users WHERE points > u.points) + 1 AS rank FROM users u WHERE user_id = ?1")?;
+                let mut rows = stmt.query(params![id_user])?;
+                if let Some(row) = rows.next()? {
+                    let points: i64 = row.get(0)?;
+                    let rank: i64 = row.get(1)?;
+                    Ok(ResponseStatus {
+                        success: true,                        
+                        success_description: Some(format!("User has {} points and is ranked {}.", points, rank)),
+                        error_message: None,
+                    })
+                } else {
+                    Err(rusqlite::Error::QueryReturnedNoRows)
+                }
+            } else {
+               
+                match conn.execute(
+                    "INSERT INTO users (user_id, user_name, points, created_at, updated_at) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",
+                    params![id_user, tag_user, 0],
+                ) {
+                    Ok(_) => Ok(ResponseStatus {
+                        success: true,                        success_description: Some(format!("User created with 0 points")),
+                        error_message: None,
+                    }),
+                    Err(err) => Ok(ResponseStatus {
+                        success: false,                        success_description: None,
+                        error_message: Some(err.to_string()),
+                    }),
+                }
+            }
+        }
+        Err(conn_err) => Err(conn_err),
+    }
+}
+
