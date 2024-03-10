@@ -1,14 +1,14 @@
 use crate::data_structs::ResponseStatus;
-use chrono::prelude::*;
+
 use rusqlite::{params, Connection, Result};
 
 pub fn add_tournament(
     conn: &Connection,
-    date_tournament: NaiveDate,
+    date_tournament: i64,
 ) -> Result<ResponseStatus, rusqlite::Error> {
     match conn.execute(
-        "INSERT INTO tournaments (tournament_date ) VALUES (strftime('%s', ?1))",
-        params![date_tournament.format("%Y-%m-%d").to_string()],
+        "INSERT INTO tournaments (tournament_date ) VALUES (?1)",
+        params![date_tournament],
     ) {
         Ok(_) => Ok(ResponseStatus {
             success: true,

@@ -2,14 +2,17 @@ mod data_structs;
 
 mod db {
     pub mod config;
-    pub mod table_rewardp;
-    pub mod table_tournaments;
-    pub mod table_users;
     pub mod utils;
+    pub mod commands {
+        pub mod table_rewardp;
+        pub mod table_tournaments;
+        pub mod table_users;
+    }
 }
 
 mod discord {
     pub mod handler;
+    pub mod utils;
     pub mod commands {
         pub mod points;
         pub mod poker;
@@ -22,7 +25,7 @@ use discord::{
     commands::{
         points::{poker, poker_discount},
         poker::{poker_search, poker_top},
-        tournaments::create_tournament,
+        tournaments::{create_tournament, test_time},
     },
     handler::Handler,
 };
@@ -50,6 +53,7 @@ async fn main() {
                 poker_top(),
                 poker_search(),
                 create_tournament(),
+                test_time(),
             ],
             ..Default::default()
         })

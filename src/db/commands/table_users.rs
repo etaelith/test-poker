@@ -4,33 +4,10 @@ use crate::{
     data_structs::{ResponseStatus, TopTen},
     db::{
         config::connect_database,
-        utils::{insert_points, insert_user, user_exists},
+        utils::{insert_user, user_exists},
     },
 };
 
-pub fn create_or_sum(
-    tag_user: &str,
-    id_user: i64,
-    chips: i64,
-) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-
-    match conn {
-        Ok(conn) => {
-            let exists: bool = user_exists(&conn, id_user)?;
-            if exists {
-                return insert_points(&conn, id_user, chips);
-            } else {
-                let insert_result = insert_user(&conn, id_user, tag_user);
-                if insert_result.is_ok() && chips > 0 {
-                    return insert_points(&conn, id_user, chips);
-                }
-                return insert_result;
-            }
-        }
-        Err(conn_err) => Err(conn_err),
-    }
-}
 pub fn update_amount(user_id: i64, chips: i64) -> Result<ResponseStatus, rusqlite::Error> {
     let conn = connect_database();
     match conn {

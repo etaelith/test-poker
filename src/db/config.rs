@@ -10,11 +10,13 @@ pub fn setup_database() -> Result<Connection> {
         points INTEGER,
         bitmex BOOLEAN DEFAULT 0,
         created_at TIMESTAMP,
+        wins INTEGER DEFAULT 0,
+        bounties INTEGER DEFAULT 0,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
 
         CREATE TABLE IF NOT EXISTS tournaments (
             tournament_id INTEGER PRIMARY KEY,
-            tournament_date DATE NOT NULL,
+            tournament_date DATE NOT NULL UNIQUE,
             bounties INTEGER
         );
 
@@ -33,7 +35,7 @@ pub fn setup_database() -> Result<Connection> {
             tournament_id INTEGER,
             user_id INTEGER,
             points INTEGER,
-            FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_id),
+            FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_date),
             FOREIGN KEY(user_id) REFERENCES users(user_id)
           );
 

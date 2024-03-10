@@ -1,6 +1,6 @@
 use crate::{
     data_structs::{Context, Error, ResponseStatus, TopTen},
-    db::table_users::{get_top, get_user_rank},
+    db::commands::table_users::{get_top, get_user_rank},
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
 #[command(slash_command, prefix_command)]
