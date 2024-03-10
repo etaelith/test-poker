@@ -8,7 +8,7 @@ use crate::{
     },
 };
 
-pub fn update_amount(user_id: i64, chips: i64) -> Result<ResponseStatus, rusqlite::Error> {
+pub fn substract_amount(user_id: i64, chips: i64) -> Result<ResponseStatus, rusqlite::Error> {
     let conn = connect_database();
     match conn {
         Ok(conn) => {
@@ -18,7 +18,7 @@ pub fn update_amount(user_id: i64, chips: i64) -> Result<ResponseStatus, rusqlit
             ) {
                 Ok(_) => Ok(ResponseStatus {
                     success: true,
-                    success_description: None,
+                    success_description: Some(format!("Substracted {chips} points to {user_id}")),
                     error_message: None,
                 }),
                 Err(err) => Ok(ResponseStatus {

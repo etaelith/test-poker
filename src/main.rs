@@ -26,7 +26,7 @@ use db::config::setup_database;
 use discord::{
     commands::{
         bounties::give_bounty,
-        points::{poker, poker_discount},
+        points::{poker_discount, sum_points},
         poker::{poker_search, poker_top},
         tournaments::{create_tournament, test_time},
     },
@@ -51,7 +51,7 @@ async fn main() {
     let framework = Framework::builder()
         .options(FrameworkOptions {
             commands: vec![
-                poker(),
+                sum_points(),
                 poker_discount(),
                 poker_top(),
                 poker_search(),

@@ -34,7 +34,13 @@ pub async fn give_bounty(
     let user_id = i64::from(target_user.id);
 
     match parse_fecha(&fecha) {
-        Ok(epoch_time) => match add_winner(winner.unwrap(), user_id, points as i64, epoch_time) {
+        Ok(epoch_time) => match add_winner(
+            winner.unwrap(),
+            user_id,
+            &target_user.name,
+            points as i64,
+            epoch_time,
+        ) {
             Ok(_) => {
                 ctx.send(CreateReply {
                     content: format!("Check parse_fecha: {epoch_time}").into(),
@@ -78,7 +84,7 @@ pub async fn give_bounty(
     }
 
     ctx.send(CreateReply {
-        content: Some(format!("Points to: {}", target_user.name)),
+        content: Some(format!("Bounties updated: {}", target_user.name)),
         embeds: vec![],
         attachments: vec![],
         ephemeral: Some(true),

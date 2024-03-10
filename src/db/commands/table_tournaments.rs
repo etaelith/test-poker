@@ -12,7 +12,7 @@ pub fn add_tournament(
     ) {
         Ok(_) => Ok(ResponseStatus {
             success: true,
-            success_description: Some(format!("Tournament Registry")),
+            success_description: Some(format!("Tournament Registred")),
             error_message: None,
         }),
         Err(err) => Ok(ResponseStatus {

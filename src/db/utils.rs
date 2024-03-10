@@ -39,7 +39,7 @@ pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
             ) {
                 Ok(_) => Ok(ResponseStatus {
                     success: true,
-                    success_description: None,
+                    success_description: Some(format!("Updated points to {user_id}")),
                     error_message: None,
                 }),
                 Err(err) => Ok(ResponseStatus {
@@ -79,7 +79,7 @@ pub fn update_bounties(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> 
                 ) {
                     Ok(_) => Ok(ResponseStatus {
                         success: true,
-                        success_description: None,
+                        success_description: Some(format!("Bounties updated for: {user_id}")),
                         error_message: None,
                     }),
                     Err(err) => Ok(ResponseStatus {
