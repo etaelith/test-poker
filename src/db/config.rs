@@ -31,7 +31,7 @@ pub fn setup_database() -> Result<Connection> {
             FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_date)
         );
 
-        CREATE TABLE IF NOT EXISTS rewardp (
+        CREATE TABLE IF NOT EXISTS reward (
             id INTEGER PRIMARY KEY,
             tournament_id INTEGER,
             user_id INTEGER,
@@ -39,7 +39,9 @@ pub fn setup_database() -> Result<Connection> {
             FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_date),
             FOREIGN KEY(user_id) REFERENCES users(user_id)
           );
-
+        
+        CREATE UNIQUE INDEX idx_bounty_winner ON bounties (tournament_id) WHERE bounty_winner = 1;
+        CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
       ",
     )?;
     for i in 1..=10 {

@@ -5,7 +5,7 @@ mod db {
     pub mod utils;
     pub mod commands {
         pub mod table_bounties;
-        pub mod table_rewardp;
+        pub mod table_reward;
         pub mod table_tournaments;
         pub mod table_users;
     }

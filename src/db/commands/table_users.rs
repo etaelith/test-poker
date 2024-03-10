@@ -8,29 +8,6 @@ use crate::{
     },
 };
 
-pub fn substract_amount(user_id: i64, chips: i64) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-    match conn {
-        Ok(conn) => {
-            match conn.execute(
-                "UPDATE users SET points = points - ?1 WHERE user_id = ?2",
-                params![chips, user_id],
-            ) {
-                Ok(_) => Ok(ResponseStatus {
-                    success: true,
-                    success_description: Some(format!("Substracted {chips} points to {user_id}")),
-                    error_message: None,
-                }),
-                Err(err) => Ok(ResponseStatus {
-                    success: false,
-                    success_description: None,
-                    error_message: Some(err.to_string()),
-                }),
-            }
-        }
-        Err(conn_err) => Err(conn_err),
-    }
-}
 pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
     match connect_database() {
         Ok(conn) => {

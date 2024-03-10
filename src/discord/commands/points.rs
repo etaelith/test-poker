@@ -1,6 +1,6 @@
 use crate::{
     data_structs::{Context, Error},
-    db::commands::{table_rewardp::insert_reward, table_users::substract_amount},
+    db::commands::table_reward::{insert_reward, substract_reward},
     discord::utils::parse_fecha,
 };
 
@@ -103,7 +103,7 @@ pub async fn poker_discount(
 ) -> Result<(), Error> {
     if points < 1 || points > 100 {
         ctx.send(CreateReply {
-            content: format!("Please choose how much points discount.").into(),
+            content: format!("Please choose points between 1 and 100.").into(),
             embeds: vec![],
             attachments: vec![],
             ephemeral: Some(true),
@@ -115,11 +115,68 @@ pub async fn poker_discount(
         .await?;
         return Ok(());
     }
+
     let target_user = user.unwrap_or_else(|| ctx.author().clone());
 
     let user_id = i64::from(target_user.id);
 
-    let _ = substract_amount(user_id, points as i64);
+    match parse_fecha(&fecha) {
+        Ok(epoch_time) => {
+            match substract_reward(user_id, &target_user.name, points as i64, epoch_time) {
+                Ok(_) => {
+                    ctx.send(CreateReply {
+                        content: format!("Reward substract for {user_id}, \n points: {points}")
+                            .into(),
+                        embeds: vec![],
+                        attachments: vec![],
+                        ephemeral: Some(true),
+                        components: None,
+                        allowed_mentions: None,
+                        reply: false,
+                        __non_exhaustive: (),
+                    })
+                    .await?;
+                }
+                Err(err) => {
+                    ctx.send(CreateReply {
+                        content: format!("Hubo un error al extraer el reward: {err}").into(),
+                        embeds: vec![],
+                        attachments: vec![],
+                        ephemeral: Some(true),
+                        components: None,
+                        allowed_mentions: None,
+                        reply: false,
+                        __non_exhaustive: (),
+                    })
+                    .await?;
+                }
+            }
+        }
+        Err(_) => {
+            ctx.send(CreateReply {
+                content: format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY.").into(),
+                embeds: vec![],
+                attachments: vec![],
+                ephemeral: Some(true),
+                components: None,
+                allowed_mentions: None,
+                reply: false,
+                __non_exhaustive: (),
+            })
+            .await?;
+        }
+    }
 
+    ctx.send(CreateReply {
+        content: Some(format!("Points subs to: {}", target_user.name)),
+        embeds: vec![],
+        attachments: vec![],
+        ephemeral: Some(true),
+        components: None,
+        allowed_mentions: None,
+        reply: false,
+        __non_exhaustive: (),
+    })
+    .await?;
     Ok(())
 }
