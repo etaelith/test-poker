@@ -4,6 +4,7 @@ mod db {
     pub mod config;
     pub mod utils;
     pub mod commands {
+        pub mod table_bounties;
         pub mod table_rewardp;
         pub mod table_tournaments;
         pub mod table_users;
@@ -14,6 +15,7 @@ mod discord {
     pub mod handler;
     pub mod utils;
     pub mod commands {
+        pub mod bounties;
         pub mod points;
         pub mod poker;
         pub mod tournaments;
@@ -23,6 +25,7 @@ use data_structs::Data;
 use db::config::setup_database;
 use discord::{
     commands::{
+        bounties::give_bounty,
         points::{poker, poker_discount},
         poker::{poker_search, poker_top},
         tournaments::{create_tournament, test_time},
@@ -54,6 +57,7 @@ async fn main() {
                 poker_search(),
                 create_tournament(),
                 test_time(),
+                give_bounty(),
             ],
             ..Default::default()
         })

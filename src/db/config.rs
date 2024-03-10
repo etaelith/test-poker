@@ -23,11 +23,12 @@ pub fn setup_database() -> Result<Connection> {
         CREATE TABLE IF NOT EXISTS bounties (
             bounty_id INTEGER PRIMARY KEY,
             bounty_winner BOOLEAN DEFAULT 0,
-            bounty_date DATE NOT NULL,
+            bounty_date TIMESTAMP,
             user_id INTEGER,
             tournament_id INTEGER,
+            coins INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(user_id),
-            FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_id)
+            FOREIGN KEY(tournament_id) REFERENCES tournaments(tournament_date)
         );
 
         CREATE TABLE IF NOT EXISTS rewardp (
