@@ -4,7 +4,70 @@ This project is a Dockerized Discord bot written in Rust, designed to keep track
 
 To learn more about the technologies used in this project, you can check out the following documentation:
 
-## Discord Commands
+## Discord Reference
+
+#### Create Tournament
+
+```http
+  discord_slash: /create_tournament ${fecha}
+```
+
+| Parameter | Type         | Description                      |
+| :-------- | :----------- | :------------------------------- |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
+
+#### Sumarized Points
+
+```http
+   discord_slash: /sum_points ${points} ${user} ${fecha}
+```
+
+| Parameter | Type         | Description                      |
+| :-------- | :----------- | :------------------------------- |
+| `points`  | `INTEGER`    | **Required**. Number of BB       |
+| `user`    | `string`     | **Required**. ID/@Mention user   |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
+
+#### Substract points
+
+```http
+   discord_slash: /sum_points ${points} ${user} ${fecha}
+```
+
+| Parameter | Type         | Description                      |
+| :-------- | :----------- | :------------------------------- |
+| `points`  | `INTEGER`    | **Required**. Number of BB       |
+| `user`    | `string`     | **Required**. ID/@Mention user   |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
+
+#### Give bounty
+
+```http
+   discord_slash: /sum_points ${points} ${user} ${fecha} ${win}
+```
+
+| Parameter | Type         | Description                                     |
+| :-------- | :----------- | :---------------------------------------------- |
+| `points`  | `INTEGER`    | **Required**. Number of BB                      |
+| `user`    | `string`     | **Required**. ID/@Mention user                  |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                |
+| `win`     | `Bool`       | **Required**. Win tournament TRUE, Bounty FALSE |
+
+#### TOP 10 tournament
+
+```http
+   discord_slash: /poker_top
+```
+
+#### GET user
+
+```http
+   discord_slash: /poker_search ${user}
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `user`    | `string` | **Required**. ID/@Mention user |
 
 ### Tech Stack
 

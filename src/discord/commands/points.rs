@@ -99,6 +99,7 @@ pub async fn poker_discount(
 
     #[description = "Points discount (1-100)"] points: u32,
     #[description = "User (mention or ID)"] user: Option<User>,
+    #[description = "Insert Date (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {
     if points < 1 || points > 100 {
         ctx.send(CreateReply {
