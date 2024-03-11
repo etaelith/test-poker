@@ -9,7 +9,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Create Tournament
 
 ```http
-  /create_tournament ${fecha}
+  /create_tournament ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -19,7 +19,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Sumarized Points
 
 ```http
-   /sum_points ${points} ${user} ${fecha}
+   /sum_points ${points} ${user} ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -31,7 +31,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Substract points
 
 ```http
-   /sum_points ${points} ${user} ${fecha}
+   /sub_points ${points} ${user} ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -43,7 +43,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Give bounty
 
 ```http
-   /sum_points ${points} ${user} ${fecha} ${win}
+   /give_bounty ${points} ${user} ${fecha} ${win} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                                     |
@@ -52,6 +52,18 @@ To learn more about the technologies used in this project, you can check out the
 | `user`    | `string`     | **Required**. ID/@Mention user                  |
 | `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                |
 | `win`     | `Bool`       | **Required**. Win tournament TRUE, Bounty FALSE |
+
+#### Give verified
+
+```http
+   /verifed ${user} ${verify} ROLE NEEDED
+```
+
+| Parameter | Type         | Description                                       |
+| :-------- | :----------- | :------------------------------------------------ |
+| `user`    | `string`     | **Required**. ID/@Mention user                    |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                  |
+| `verify`  | `Bool`       | **Required**. Checked on bitmex TRUE or not FALSE |
 
 #### TOP 10 tournament
 
