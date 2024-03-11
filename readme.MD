@@ -1,5 +1,7 @@
 # Discord Tournament Points Bot
 
+![Logo](logo.jpg)
+
 This project is a Dockerized Discord bot written in Rust, designed to keep track of points won in tournaments.
 
 To learn more about the technologies used in this project, you can check out the following documentation:
