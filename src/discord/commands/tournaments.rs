@@ -19,29 +19,31 @@ pub async fn create_tournament(
                 let conn = connect_database().unwrap();
                 match add_tournament(&conn, epoch_time) {
                     Ok(_) => {
-                        let _ = send_message(
+                        send_message(
                             &ctx,
-                            format!("Torneo creado con éxito para la fecha: {epoch_time}"),
-                        );
+                            format!("Torneo creado con éxito para la fecha: {}", epoch_time),
+                        )
+                        .await?;
                     }
                     Err(err) => {
-                        let _ =
-                            send_message(&ctx, format!("Hubo un error al crear el torneo: {err}"));
+                        send_message(&ctx, format!("Hubo un error al crear el torneo: {err}"))
+                            .await?;
                     }
                 }
             }
             Err(_) => {
-                let _ = send_message(
+                send_message(
                     &ctx,
                     format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
-                );
+                )
+                .await?;
             }
         },
         Ok(false) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario"));
+            send_message(&ctx, format!("No tenes el role necesario")).await?;
         }
         Err(e) => {
-            let _ = send_message(&ctx, format!("Hubo un error en la funcion checked {e}"));
+            send_message(&ctx, format!("Hubo un error en la funcion checked {e}")).await?;
         }
     }
 

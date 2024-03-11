@@ -101,20 +101,20 @@ pub async fn verified(
             let user_id = i64::from(target_user.id);
             match verified_bitmex(user_id, winner.unwrap(), &target_user.name) {
                 Ok(_) => {
-                    let _ =
-                        send_message(&ctx, format!("State verify changed to {}", winner.unwrap()));
+                    send_message(&ctx, format!("State verify changed to {}", winner.unwrap()))
+                        .await?;
                 }
                 Err(err) => {
-                    let _ =
-                        send_message(&ctx, format!("Hubo un error al insertar el reward: {err}"));
+                    send_message(&ctx, format!("Hubo un error al insertar el reward: {err}"))
+                        .await?;
                 }
             }
         }
         Ok(false) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario"));
+            send_message(&ctx, format!("No tenes el role necesario")).await?;
         }
         Err(e) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario {:?}", e));
+            send_message(&ctx, format!("No tenes el role necesario {:?}", e)).await?;
         }
     }
 
@@ -166,10 +166,11 @@ pub async fn poker_top_tournament(
             }
         },
         Err(_) => {
-            let _ = send_message(
+            send_message(
                 &ctx,
                 format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
-            );
+            )
+            .await?;
         }
     }
 

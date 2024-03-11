@@ -6,6 +6,18 @@ This project is a Dockerized Discord bot written in Rust, designed to keep track
 
 To learn more about the technologies used in this project, you can check out the following documentation:
 
+## Deployment
+
+To deploy this project run
+
+```bash
+  docker build -t <PROJECT_NAME> .
+```
+
+```bash
+   docker run -e DISCORD_TOKEN=<ID> DB_PATH=<DB_PATH> ROLE_ADMIN=<ROLE_ID> <containerImage>
+```
+
 ## Discord Slash Commands
 
 #### Create Tournament

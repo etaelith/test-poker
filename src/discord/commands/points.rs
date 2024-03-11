@@ -19,7 +19,7 @@ pub async fn sum_points(
     match checked {
         Ok(true) => {
             if points < 1 || points > 100 {
-                let _ = send_message(&ctx, format!("Please choose points between 1 and 100."));
+                send_message(&ctx, format!("Please choose points between 1 and 100.")).await?;
 
                 return Ok(());
             }
@@ -32,32 +32,35 @@ pub async fn sum_points(
                 Ok(epoch_time) => {
                     match insert_reward(user_id, &target_user.name, points as i64, epoch_time) {
                         Ok(_) => {
-                            let _ = send_message(
+                            send_message(
                                 &ctx,
                                 format!("Reward delivered for {user_id}, \n points: {points}"),
-                            );
+                            )
+                            .await?;
                         }
                         Err(err) => {
-                            let _ = send_message(
+                            send_message(
                                 &ctx,
                                 format!("Hubo un error al insertar el reward: {err}"),
-                            );
+                            )
+                            .await?;
                         }
                     }
                 }
                 Err(_) => {
-                    let _ = send_message(
+                    send_message(
                         &ctx,
                         format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
-                    );
+                    )
+                    .await?;
                 }
             }
         }
         Ok(false) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario"));
+            send_message(&ctx, format!("No tenes el role necesario")).await?;
         }
         Err(e) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario {:?}", e));
+            send_message(&ctx, format!("No tenes el role necesario {:?}", e)).await?;
         }
     }
 
@@ -78,7 +81,7 @@ pub async fn sub_points(
     match checked {
         Ok(true) => {
             if points < 1 || points > 100 {
-                let _ = send_message(&ctx, format!("Please choose points between 1 and 100."));
+                send_message(&ctx, format!("Please choose points between 1 and 100.")).await?;
 
                 return Ok(());
             }
@@ -91,32 +94,35 @@ pub async fn sub_points(
                 Ok(epoch_time) => {
                     match substract_reward(user_id, &target_user.name, points as i64, epoch_time) {
                         Ok(_) => {
-                            let _ = send_message(
+                            send_message(
                                 &ctx,
                                 format!("Reward substract for {user_id}, \n points: {points}"),
-                            );
+                            )
+                            .await?;
                         }
                         Err(err) => {
-                            let _ = send_message(
+                            send_message(
                                 &ctx,
                                 format!("Hubo un error al extraer el reward: {err}"),
-                            );
+                            )
+                            .await?;
                         }
                     }
                 }
                 Err(_) => {
-                    let _ = send_message(
+                    send_message(
                         &ctx,
                         format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
-                    );
+                    )
+                    .await?;
                 }
             }
         }
         Ok(false) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario"));
+            send_message(&ctx, format!("No tenes el role necesario")).await?;
         }
         Err(e) => {
-            let _ = send_message(&ctx, format!("No tenes el role necesario {:#?}", e));
+            send_message(&ctx, format!("No tenes el role necesario {:#?}", e)).await?;
         }
     }
     Ok(())
