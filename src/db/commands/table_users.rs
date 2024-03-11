@@ -77,3 +77,32 @@ pub fn get_user_rank(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rus
         Err(conn_err) => Err(conn_err),
     }
 }
+
+pub fn verified_bitmex(
+    id_user: i64,
+    state: bool,
+    tag_user: &str,
+) -> Result<ResponseStatus, rusqlite::Error> {
+    let conn = connect_database()?;
+    let exists = user_exists(&conn, id_user)?;
+    if exists {
+        conn.execute(
+            "UPDATE users SET bitmex = ?1 WHERE user_id = ?2",
+            params![state, id_user],
+        )?;
+        Ok(ResponseStatus {
+            success: true,
+            success_description: Some(format!("Tournament Registred")),
+            error_message: None,
+        })
+    } else {
+        let insert_result = insert_user(&conn, id_user, tag_user);
+        if insert_result.is_ok() {
+            conn.execute(
+                "UPDATE users SET bitmex = ?1 WHERE user_id = ?2",
+                params![state, id_user],
+            )?;
+        }
+        insert_result
+    }
+}

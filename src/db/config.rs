@@ -1,7 +1,7 @@
 use rusqlite::{Connection, Result};
 
 pub fn setup_database() -> Result<Connection> {
-    let conn = Connection::open(std::env::var("DB_PATH").expect("missing DISCORD_TOKEN"))?;
+    let conn = Connection::open(std::env::var("DB_PATH").expect("missing DB_PATH"))?;
     conn.execute_batch(
         "CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY,

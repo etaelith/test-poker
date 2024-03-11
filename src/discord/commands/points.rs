@@ -80,17 +80,6 @@ pub async fn sum_points(
         }
     }
 
-    ctx.send(CreateReply {
-        content: Some(format!("Points to: {}", target_user.name)),
-        embeds: vec![],
-        attachments: vec![],
-        ephemeral: Some(true),
-        components: None,
-        allowed_mentions: None,
-        reply: false,
-        __non_exhaustive: (),
-    })
-    .await?;
     Ok(())
 }
 #[command(slash_command, prefix_command)]
@@ -166,17 +155,5 @@ pub async fn poker_discount(
             .await?;
         }
     }
-
-    ctx.send(CreateReply {
-        content: Some(format!("Points subs to: {}", target_user.name)),
-        embeds: vec![],
-        attachments: vec![],
-        ephemeral: Some(true),
-        components: None,
-        allowed_mentions: None,
-        reply: false,
-        __non_exhaustive: (),
-    })
-    .await?;
     Ok(())
 }

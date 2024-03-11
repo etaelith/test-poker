@@ -9,7 +9,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Create Tournament
 
 ```http
-  discord_slash: /create_tournament ${fecha}
+  /create_tournament ${fecha}
 ```
 
 | Parameter | Type         | Description                      |
@@ -19,7 +19,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Sumarized Points
 
 ```http
-   discord_slash: /sum_points ${points} ${user} ${fecha}
+   /sum_points ${points} ${user} ${fecha}
 ```
 
 | Parameter | Type         | Description                      |
@@ -31,7 +31,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Substract points
 
 ```http
-   discord_slash: /sum_points ${points} ${user} ${fecha}
+   /sum_points ${points} ${user} ${fecha}
 ```
 
 | Parameter | Type         | Description                      |
@@ -43,7 +43,7 @@ To learn more about the technologies used in this project, you can check out the
 #### Give bounty
 
 ```http
-   discord_slash: /sum_points ${points} ${user} ${fecha} ${win}
+   /sum_points ${points} ${user} ${fecha} ${win}
 ```
 
 | Parameter | Type         | Description                                     |
@@ -56,13 +56,13 @@ To learn more about the technologies used in this project, you can check out the
 #### TOP 10 tournament
 
 ```http
-   discord_slash: /poker_top
+   /poker_top
 ```
 
 #### GET user
 
 ```http
-   discord_slash: /poker_search ${user}
+   /poker_search ${user}
 ```
 
 | Parameter | Type     | Description                    |
@@ -129,6 +129,6 @@ CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
 - [serde_json](https://docs.rs/serde_json/latest/serde_json/index.html)
 - [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
 
-```
+#### Weird shit
 
-```
+- [ErrorPath](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line/34386471#34386471)

@@ -83,16 +83,5 @@ pub async fn give_bounty(
         }
     }
 
-    ctx.send(CreateReply {
-        content: Some(format!("Bounties updated: {}", target_user.name)),
-        embeds: vec![],
-        attachments: vec![],
-        ephemeral: Some(true),
-        components: None,
-        allowed_mentions: None,
-        reply: false,
-        __non_exhaustive: (),
-    })
-    .await?;
     Ok(())
 }
