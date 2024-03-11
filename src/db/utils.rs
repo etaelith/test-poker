@@ -9,6 +9,17 @@ pub fn user_exists(conn: &Connection, id_user: i64) -> Result<bool> {
     let exists: bool = stmt.query_row(params![id_user], |row| row.get(0))?;
     Ok(exists)
 }
+pub fn tournament_exists(tournament_date: i64) -> Result<bool> {
+    match connect_database() {
+        Ok(conn) => {
+            let mut stmt = conn
+                .prepare("SELECT EXISTS(SELECT 1 FROM tournaments WHERE tournament_date = ?1)")?;
+            let exists: bool = stmt.query_row(params![tournament_date], |row| row.get(0))?;
+            Ok(exists)
+        }
+        Err(_) => todo!(),
+    }
+}
 pub fn insert_user(conn: &Connection, id_user: i64, tag_user: &str) -> Result<ResponseStatus> {
     match conn.execute(
         "INSERT INTO users (user_id, user_name, points, created_at, updated_at) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)",

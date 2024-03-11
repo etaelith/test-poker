@@ -1,10 +1,9 @@
 use crate::{
     data_structs::{Context, Error},
-    db::commands::table_bounties::add_winner,
+    db::{commands::table_bounties::add_winner, utils::tournament_exists},
     discord::utils::{check_role, parse_fecha, send_message},
 };
 use poise::{command, serenity_prelude::User};
-
 #[command(slash_command, prefix_command)]
 pub async fn give_bounty(
     ctx: Context<'_>,
@@ -20,33 +19,50 @@ pub async fn give_bounty(
         Ok(true) => {
             if points < 1 || points > 100 {
                 send_message(&ctx, format!("Please choose points between 1 and 100.")).await?;
-
                 return Ok(());
             }
 
             let target_user = user.unwrap_or_else(|| ctx.author().clone());
-
             let user_id = i64::from(target_user.id);
 
             match parse_fecha(&fecha) {
-                Ok(epoch_time) => match add_winner(
-                    winner.unwrap(),
-                    user_id,
-                    &target_user.name,
-                    points as i64,
-                    epoch_time,
-                ) {
-                    Ok(_) => {
-                        send_message(&ctx, format!("Bounty gived: {points}")).await?;
+                Ok(epoch_time) => {
+                    // Verificar la existencia del torneo antes de agregar el ganador
+                    match tournament_exists(epoch_time) {
+                        Ok(true) => {
+                            match add_winner(
+                                winner.unwrap(),
+                                user_id,
+                                &target_user.name,
+                                points as i64,
+                                epoch_time,
+                            ) {
+                                Ok(_) => {
+                                    send_message(&ctx, format!("Bounty given: {points}")).await?;
+                                }
+                                Err(err) => {
+                                    send_message(
+                                        &ctx,
+                                        format!("Hubo un error en la función add_winner: {err}"),
+                                    )
+                                    .await?;
+                                }
+                            }
+                        }
+                        Ok(false) => {
+                            send_message(&ctx, format!("El torneo no existe.")).await?;
+                        }
+                        Err(err) => {
+                            send_message(
+                                &ctx,
+                                format!(
+                                    "Hubo un error al verificar la existencia del torneo: {err}"
+                                ),
+                            )
+                            .await?;
+                        }
                     }
-                    Err(err) => {
-                        send_message(
-                            &ctx,
-                            format!("Hubo un error en la funcion add_winner {err}"),
-                        )
-                        .await?;
-                    }
-                },
+                }
                 Err(_) => {
                     send_message(
                         &ctx,
@@ -57,10 +73,10 @@ pub async fn give_bounty(
             }
         }
         Ok(false) => {
-            send_message(&ctx, format!("No tenes el role necesario")).await?;
+            send_message(&ctx, format!("No tienes el rol necesario")).await?;
         }
         Err(e) => {
-            send_message(&ctx, format!("No tenes el role necesario {e}")).await?;
+            send_message(&ctx, format!("No tienes el rol necesario {e}")).await?;
         }
     }
 

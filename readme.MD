@@ -15,7 +15,7 @@ To deploy this project run
 ```
 
 ```bash
-   docker run -e DISCORD_TOKEN=<ID> DB_PATH=<DB_PATH> ROLE_ADMIN=<ROLE_ID> <containerImage>
+  docker run -e DISCORD_TOKEN=<ID> DB_PATH=<DB_PATH> ROLE_ADMIN=<ROLE_ID> <containerImage>
 ```
 
 ## Discord Slash Commands
@@ -73,11 +73,10 @@ To deploy this project run
    /verifed ${user} ${verify} ROLE NEEDED
 ```
 
-| Parameter | Type         | Description                                       |
-| :-------- | :----------- | :------------------------------------------------ |
-| `user`    | `string`     | **Required**. ID/@Mention user                    |
-| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                  |
-| `verify`  | `Bool`       | **Required**. Checked on bitmex TRUE or not FALSE |
+| Parameter | Type     | Description                                       |
+| :-------- | :------- | :------------------------------------------------ |
+| `user`    | `string` | **Required**. ID/@Mention user                    |
+| `verify`  | `Bool`   | **Required**. Checked on bitmex TRUE or not FALSE |
 
 #### TOP 10 tournament
 
