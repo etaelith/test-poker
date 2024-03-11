@@ -73,6 +73,16 @@ To learn more about the technologies used in this project, you can check out the
    /poker_top
 ```
 
+#### Tournament ID TOP 10
+
+```http
+   /poker_top_tournament ${fecha}
+```
+
+| Parameter | Type         | Description                      |
+| :-------- | :----------- | :------------------------------- |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
+
 #### GET user
 
 ```http
