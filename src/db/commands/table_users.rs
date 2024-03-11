@@ -47,6 +47,52 @@ pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
         Err(conn_err) => Err(conn_err),
     }
 }
+pub fn get_top_tournament(tournament_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
+    match connect_database() {
+        Ok(conn) => {
+            let mut statement = match conn.prepare(
+                "
+                    SELECT u.user_name, r.points 
+                    FROM reward r
+                    JOIN users u ON u.user_id = r.user_id
+                    WHERE r.tournament_id = ?
+                    ORDER BY r.points DESC 
+                    LIMIT 10;
+                ",
+            ) {
+                Ok(stmt) => stmt,
+                Err(err) => return Err(err),
+            };
+            let mut position_counter = 0;
+            let users_data: Result<Vec<TopTen>, rusqlite::Error> = statement
+                .query_map(params![tournament_id], |row| {
+                    position_counter += 1;
+                    Ok(TopTen {
+                        name: row.get(0)?,
+                        position: position_counter,
+                        points: row.get(1)?,
+                    })
+                })
+                .and_then(|mapped_rows| mapped_rows.collect());
+            match users_data {
+                Ok(data) => Ok(ResponseStatus {
+                    success: true,
+                    success_description: Some(serde_json::to_string(&data).unwrap()),
+                    error_message: None,
+                }),
+                Err(err) => {
+                    eprintln!("Error al obtener datos de usuarios: {:?}", err);
+                    Ok(ResponseStatus {
+                        success: false,
+                        success_description: None,
+                        error_message: Some(err.to_string()),
+                    })
+                }
+            }
+        }
+        Err(conn_err) => Err(conn_err),
+    }
+}
 
 pub fn get_user_rank(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rusqlite::Error> {
     match connect_database() {

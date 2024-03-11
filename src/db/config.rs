@@ -44,16 +44,6 @@ pub fn setup_database() -> Result<Connection> {
         CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
       ",
     )?;
-    for i in 1..=10 {
-        let user_name = format!("User{}", i);
-        let user_id = i.to_string();
-        let points: i64 = 1000 - i * 50;
-
-        conn.execute(
-            "INSERT INTO users (user_name, user_id, points,created_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
-            &[&user_name, &user_id, &points.to_string()],
-        )?;
-    }
 
     conn.is_autocommit();
     println!("DB config check");

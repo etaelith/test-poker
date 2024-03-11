@@ -25,7 +25,7 @@ use discord::{
     commands::{
         bounties::give_bounty,
         points::{sub_points, sum_points},
-        poker::{poker_search, poker_top, verified},
+        poker::{poker_search, poker_top, poker_top_tournament, verified},
         tournaments::{checking, create_tournament},
     },
     handler::Handler,
@@ -54,6 +54,7 @@ async fn main() {
                 give_bounty(),
                 poker_top(),
                 poker_search(),
+                poker_top_tournament(),
                 verified(),
                 checking(),
             ],
