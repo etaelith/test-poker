@@ -1,10 +1,10 @@
 use crate::{
     data_structs::{Context, Error},
     db::{commands::table_tournaments::add_tournament, config::connect_database},
-    discord::utils::{check_role, parse_fecha},
+    discord::utils::{check_role, parse_fecha, send_message},
 };
 
-use poise::{command, CreateReply};
+use poise::command;
 
 #[command(slash_command, prefix_command)]
 pub async fn create_tournament(
@@ -19,74 +19,29 @@ pub async fn create_tournament(
                 let conn = connect_database().unwrap();
                 match add_tournament(&conn, epoch_time) {
                     Ok(_) => {
-                        ctx.send(CreateReply {
-                            content: format!("Torneo creado con éxito para la fecha: {epoch_time}")
-                                .into(),
-                            embeds: vec![],
-                            attachments: vec![],
-                            ephemeral: Some(true),
-                            components: None,
-                            allowed_mentions: None,
-                            reply: false,
-                            __non_exhaustive: (),
-                        })
-                        .await?;
+                        let _ = send_message(
+                            &ctx,
+                            format!("Torneo creado con éxito para la fecha: {epoch_time}"),
+                        );
                     }
                     Err(err) => {
-                        ctx.send(CreateReply {
-                            content: format!("Hubo un error al crear el torneo: {err}").into(),
-                            embeds: vec![],
-                            attachments: vec![],
-                            ephemeral: Some(true),
-                            components: None,
-                            allowed_mentions: None,
-                            reply: false,
-                            __non_exhaustive: (),
-                        })
-                        .await?;
+                        let _ =
+                            send_message(&ctx, format!("Hubo un error al crear el torneo: {err}"));
                     }
                 }
             }
             Err(_) => {
-                ctx.send(CreateReply {
-                    content: format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY.")
-                        .into(),
-                    embeds: vec![],
-                    attachments: vec![],
-                    ephemeral: Some(true),
-                    components: None,
-                    allowed_mentions: None,
-                    reply: false,
-                    __non_exhaustive: (),
-                })
-                .await?;
+                let _ = send_message(
+                    &ctx,
+                    format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+                );
             }
         },
         Ok(false) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario"));
         }
         Err(e) => {
-            ctx.send(CreateReply {
-                content: format!("Hubo un error en la funcion checked {e}").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("Hubo un error en la funcion checked {e}"));
         }
     }
 

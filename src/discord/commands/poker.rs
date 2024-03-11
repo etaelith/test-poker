@@ -1,7 +1,7 @@
 use crate::{
     data_structs::{Context, Error, ResponseStatus, TopTen},
     db::commands::table_users::{get_top, get_top_tournament, get_user_rank, verified_bitmex},
-    discord::utils::{check_role, parse_fecha},
+    discord::utils::{check_role, parse_fecha, send_message},
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
 #[command(slash_command, prefix_command)]
@@ -101,58 +101,20 @@ pub async fn verified(
             let user_id = i64::from(target_user.id);
             match verified_bitmex(user_id, winner.unwrap(), &target_user.name) {
                 Ok(_) => {
-                    ctx.send(CreateReply {
-                        content: format!("State verify changed to {}", winner.unwrap()).into(),
-                        embeds: vec![],
-                        attachments: vec![],
-                        ephemeral: Some(true),
-                        components: None,
-                        allowed_mentions: None,
-                        reply: false,
-                        __non_exhaustive: (),
-                    })
-                    .await?;
+                    let _ =
+                        send_message(&ctx, format!("State verify changed to {}", winner.unwrap()));
                 }
                 Err(err) => {
-                    ctx.send(CreateReply {
-                        content: format!("Hubo un error al insertar el reward: {err}").into(),
-                        embeds: vec![],
-                        attachments: vec![],
-                        ephemeral: Some(true),
-                        components: None,
-                        allowed_mentions: None,
-                        reply: false,
-                        __non_exhaustive: (),
-                    })
-                    .await?;
+                    let _ =
+                        send_message(&ctx, format!("Hubo un error al insertar el reward: {err}"));
                 }
             }
         }
         Ok(false) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario"));
         }
         Err(e) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario {:?}", e).into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario {:?}", e));
         }
     }
 
@@ -204,17 +166,10 @@ pub async fn poker_top_tournament(
             }
         },
         Err(_) => {
-            ctx.send(CreateReply {
-                content: format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY.").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(
+                &ctx,
+                format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+            );
         }
     }
 

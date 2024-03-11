@@ -1,10 +1,10 @@
 use crate::{
     data_structs::{Context, Error},
     db::commands::table_reward::{insert_reward, substract_reward},
-    discord::utils::{check_role, parse_fecha},
+    discord::utils::{check_role, parse_fecha, send_message},
 };
 
-use poise::{command, serenity_prelude::User, CreateReply};
+use poise::{command, serenity_prelude::User};
 
 #[command(slash_command, prefix_command)]
 pub async fn sum_points(
@@ -19,17 +19,8 @@ pub async fn sum_points(
     match checked {
         Ok(true) => {
             if points < 1 || points > 100 {
-                ctx.send(CreateReply {
-                    content: format!("Please choose points between 1 and 100.").into(),
-                    embeds: vec![],
-                    attachments: vec![],
-                    ephemeral: Some(true),
-                    components: None,
-                    allowed_mentions: None,
-                    reply: false,
-                    __non_exhaustive: (),
-                })
-                .await?;
+                let _ = send_message(&ctx, format!("Please choose points between 1 and 100."));
+
                 return Ok(());
             }
 
@@ -41,80 +32,32 @@ pub async fn sum_points(
                 Ok(epoch_time) => {
                     match insert_reward(user_id, &target_user.name, points as i64, epoch_time) {
                         Ok(_) => {
-                            ctx.send(CreateReply {
-                                content: format!(
-                                    "Reward delivered for {user_id}, \n points: {points}"
-                                )
-                                .into(),
-                                embeds: vec![],
-                                attachments: vec![],
-                                ephemeral: Some(true),
-                                components: None,
-                                allowed_mentions: None,
-                                reply: false,
-                                __non_exhaustive: (),
-                            })
-                            .await?;
+                            let _ = send_message(
+                                &ctx,
+                                format!("Reward delivered for {user_id}, \n points: {points}"),
+                            );
                         }
                         Err(err) => {
-                            ctx.send(CreateReply {
-                                content: format!("Hubo un error al insertar el reward: {err}")
-                                    .into(),
-                                embeds: vec![],
-                                attachments: vec![],
-                                ephemeral: Some(true),
-                                components: None,
-                                allowed_mentions: None,
-                                reply: false,
-                                __non_exhaustive: (),
-                            })
-                            .await?;
+                            let _ = send_message(
+                                &ctx,
+                                format!("Hubo un error al insertar el reward: {err}"),
+                            );
                         }
                     }
                 }
                 Err(_) => {
-                    ctx.send(CreateReply {
-                        content: format!(
-                            "Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."
-                        )
-                        .into(),
-                        embeds: vec![],
-                        attachments: vec![],
-                        ephemeral: Some(true),
-                        components: None,
-                        allowed_mentions: None,
-                        reply: false,
-                        __non_exhaustive: (),
-                    })
-                    .await?;
+                    let _ = send_message(
+                        &ctx,
+                        format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+                    );
                 }
             }
         }
         Ok(false) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario"));
         }
         Err(e) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario {:?}", e).into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario {:?}", e));
         }
     }
 
@@ -135,17 +78,8 @@ pub async fn sub_points(
     match checked {
         Ok(true) => {
             if points < 1 || points > 100 {
-                ctx.send(CreateReply {
-                    content: format!("Please choose points between 1 and 100.").into(),
-                    embeds: vec![],
-                    attachments: vec![],
-                    ephemeral: Some(true),
-                    components: None,
-                    allowed_mentions: None,
-                    reply: false,
-                    __non_exhaustive: (),
-                })
-                .await?;
+                let _ = send_message(&ctx, format!("Please choose points between 1 and 100."));
+
                 return Ok(());
             }
 
@@ -157,80 +91,32 @@ pub async fn sub_points(
                 Ok(epoch_time) => {
                     match substract_reward(user_id, &target_user.name, points as i64, epoch_time) {
                         Ok(_) => {
-                            ctx.send(CreateReply {
-                                content: format!(
-                                    "Reward substract for {user_id}, \n points: {points}"
-                                )
-                                .into(),
-                                embeds: vec![],
-                                attachments: vec![],
-                                ephemeral: Some(true),
-                                components: None,
-                                allowed_mentions: None,
-                                reply: false,
-                                __non_exhaustive: (),
-                            })
-                            .await?;
+                            let _ = send_message(
+                                &ctx,
+                                format!("Reward substract for {user_id}, \n points: {points}"),
+                            );
                         }
                         Err(err) => {
-                            ctx.send(CreateReply {
-                                content: format!("Hubo un error al extraer el reward: {err}")
-                                    .into(),
-                                embeds: vec![],
-                                attachments: vec![],
-                                ephemeral: Some(true),
-                                components: None,
-                                allowed_mentions: None,
-                                reply: false,
-                                __non_exhaustive: (),
-                            })
-                            .await?;
+                            let _ = send_message(
+                                &ctx,
+                                format!("Hubo un error al extraer el reward: {err}"),
+                            );
                         }
                     }
                 }
                 Err(_) => {
-                    ctx.send(CreateReply {
-                        content: format!(
-                            "Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."
-                        )
-                        .into(),
-                        embeds: vec![],
-                        attachments: vec![],
-                        ephemeral: Some(true),
-                        components: None,
-                        allowed_mentions: None,
-                        reply: false,
-                        __non_exhaustive: (),
-                    })
-                    .await?;
+                    let _ = send_message(
+                        &ctx,
+                        format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+                    );
                 }
             }
         }
         Ok(false) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario"));
         }
         Err(e) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario {:#?}", e).into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario {:#?}", e));
         }
     }
     Ok(())

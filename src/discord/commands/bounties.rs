@@ -1,9 +1,9 @@
 use crate::{
     data_structs::{Context, Error},
     db::commands::table_bounties::add_winner,
-    discord::utils::{check_role, parse_fecha},
+    discord::utils::{check_role, parse_fecha, send_message},
 };
-use poise::{command, serenity_prelude::User, CreateReply};
+use poise::{command, serenity_prelude::User};
 
 #[command(slash_command, prefix_command)]
 pub async fn give_bounty(
@@ -19,17 +19,8 @@ pub async fn give_bounty(
     match checked {
         Ok(true) => {
             if points < 1 || points > 100 {
-                ctx.send(CreateReply {
-                    content: format!("Please choose points between 1 and 100.").into(),
-                    embeds: vec![],
-                    attachments: vec![],
-                    ephemeral: Some(true),
-                    components: None,
-                    allowed_mentions: None,
-                    reply: false,
-                    __non_exhaustive: (),
-                })
-                .await?;
+                let _ = send_message(&ctx, format!("Please choose points between 1 and 100."));
+
                 return Ok(());
             }
 
@@ -46,75 +37,28 @@ pub async fn give_bounty(
                     epoch_time,
                 ) {
                     Ok(_) => {
-                        ctx.send(CreateReply {
-                            content: format!("Bounty gived: {points}").into(),
-                            embeds: vec![],
-                            attachments: vec![],
-                            ephemeral: Some(true),
-                            components: None,
-                            allowed_mentions: None,
-                            reply: false,
-                            __non_exhaustive: (),
-                        })
-                        .await?;
+                        let _ = send_message(&ctx, format!("Bounty gived: {points}"));
                     }
                     Err(err) => {
-                        ctx.send(CreateReply {
-                            content: format!("Hubo un error en la funcion add_winner {err}").into(),
-                            embeds: vec![],
-                            attachments: vec![],
-                            ephemeral: Some(true),
-                            components: None,
-                            allowed_mentions: None,
-                            reply: false,
-                            __non_exhaustive: (),
-                        })
-                        .await?;
+                        let _ = send_message(
+                            &ctx,
+                            format!("Hubo un error en la funcion add_winner {err}"),
+                        );
                     }
                 },
                 Err(_) => {
-                    ctx.send(CreateReply {
-                        content: format!(
-                            "Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."
-                        )
-                        .into(),
-                        embeds: vec![],
-                        attachments: vec![],
-                        ephemeral: Some(true),
-                        components: None,
-                        allowed_mentions: None,
-                        reply: false,
-                        __non_exhaustive: (),
-                    })
-                    .await?;
+                    let _ = send_message(
+                        &ctx,
+                        format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+                    );
                 }
             }
         }
         Ok(false) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario"));
         }
         Err(e) => {
-            ctx.send(CreateReply {
-                content: format!("No tenes el role necesario {e}").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
+            let _ = send_message(&ctx, format!("No tenes el role necesario {e}"));
         }
     }
 

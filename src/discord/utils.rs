@@ -1,5 +1,6 @@
 use crate::data_structs::{Context, Error};
 use chrono::{Duration, NaiveDate};
+use poise::CreateReply;
 pub fn parse_fecha(fecha: &str) -> Result<i64, &'static str> {
     match NaiveDate::parse_from_str(fecha, "%d/%m/%Y") {
         Ok(parsed_date) => {
@@ -21,4 +22,19 @@ pub async fn check_role(ctx: &Context<'_>, role_str: String) -> Result<bool, Err
     let has_role = ctx.author().has_role(ctx.http(), guild_id, role).await?;
 
     Ok(has_role)
+}
+
+pub async fn send_message(ctx: &Context<'_>, content: String) -> Result<(), Error> {
+    ctx.send(CreateReply {
+        content: content.into(),
+        embeds: vec![],
+        attachments: vec![],
+        ephemeral: Some(true),
+        components: None,
+        allowed_mentions: None,
+        reply: false,
+        __non_exhaustive: (),
+    })
+    .await?;
+    Ok(())
 }
