@@ -22,4 +22,4 @@ VOLUME /app/data
 
 CMD [ "./idiotita-poker" ]
 
-# docker run -e DISCORD_TOKEN=<ID> DB_PATH=<DB_PATH> <containerImage>
+# docker run -e DISCORD_TOKEN=<ID> DB_PATH=<DB_PATH> ROLE_ADMIN=<ROLE_ID> <containerImage>

@@ -1,5 +1,4 @@
 mod data_structs;
-
 mod db {
     pub mod config;
     pub mod utils;
@@ -10,7 +9,6 @@ mod db {
         pub mod table_users;
     }
 }
-
 mod discord {
     pub mod handler;
     pub mod utils;
@@ -32,7 +30,6 @@ use discord::{
     },
     handler::Handler,
 };
-
 use poise::{
     builtins,
     serenity_prelude::{

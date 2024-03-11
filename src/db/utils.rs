@@ -28,8 +28,7 @@ pub fn insert_user(conn: &Connection, id_user: i64, tag_user: &str) -> Result<Re
 }
 
 pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-    match conn {
+    match connect_database() {
         Ok(conn) => {
             match conn.execute(
                 "UPDATE users
@@ -54,8 +53,7 @@ pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
 }
 
 pub fn update_bounties(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-    match conn {
+    match connect_database() {
         Ok(conn) => {
             match conn.execute(
                 "UPDATE users

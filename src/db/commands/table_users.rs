@@ -49,8 +49,7 @@ pub fn get_top() -> Result<ResponseStatus, rusqlite::Error> {
 }
 
 pub fn get_user_rank(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-    match conn {
+    match connect_database() {
         Ok(conn) => {
             let exists: bool = user_exists(&conn, id_user)?;
             if exists {

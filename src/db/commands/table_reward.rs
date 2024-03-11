@@ -14,9 +14,7 @@ pub fn insert_reward(
     chips: i64,
     tournament_id: i64,
 ) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-
-    match conn {
+    match connect_database() {
         Ok(conn) => {
             let exists: bool = user_exists(&conn, user_id)?;
             if exists {
@@ -54,9 +52,7 @@ pub fn substract_reward(
     chips: i64,
     tournament_id: i64,
 ) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-
-    match conn {
+    match connect_database() {
         Ok(conn) => {
             let exists: bool = user_exists(&conn, user_id)?;
             if exists {

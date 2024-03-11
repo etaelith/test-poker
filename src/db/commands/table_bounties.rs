@@ -15,8 +15,7 @@ pub fn add_winner(
     points: i64,
     date_tournament: i64,
 ) -> Result<ResponseStatus, rusqlite::Error> {
-    let conn = connect_database();
-    match conn {
+    match connect_database() {
         Ok(conn) => {
             let exists = user_exists(&conn, user_id)?;
             if exists {

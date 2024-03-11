@@ -1,7 +1,7 @@
 use crate::{
     data_structs::{Context, Error},
     db::{commands::table_tournaments::add_tournament, config::connect_database},
-    discord::utils::parse_fecha,
+    discord::utils::{check_role, parse_fecha},
 };
 
 use poise::{command, CreateReply};
@@ -67,23 +67,12 @@ pub async fn test_time(
     ctx: Context<'_>,
     #[description = "Insert Date (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {
-    match parse_fecha(&fecha) {
-        Ok(epoch_time) => {
-            println!("Epoch time: {}", epoch_time)
-        }
-        Err(_) => {
-            ctx.send(CreateReply {
-                content: format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY.").into(),
-                embeds: vec![],
-                attachments: vec![],
-                ephemeral: Some(true),
-                components: None,
-                allowed_mentions: None,
-                reply: false,
-                __non_exhaustive: (),
-            })
-            .await?;
-        }
+    let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
+    let checked = check_role(&ctx, role_str).await;
+    match checked {
+        Ok(true) => println!("Role checked: true - {fecha}"),
+        Ok(false) => println!("Role'nt checked: false - {fecha}"),
+        Err(e) => println!("Error checking role: {:?}", e),
     }
     Ok(())
 }
