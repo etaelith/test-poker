@@ -20,6 +20,38 @@ To deploy this project run
 
 ## Discord Slash Commands
 
+#### GET TOURNAMENTS
+
+```http
+   /get_tournaments
+```
+
+#### TOP 10 tournament
+
+```http
+   /poker_top
+```
+
+#### Tournament ID TOP 10
+
+```http
+   /poker_top_tournament ${fecha}
+```
+
+| Parameter | Type         | Description                      |
+| :-------- | :----------- | :------------------------------- |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
+
+#### GET user
+
+```http
+   /poker_search ${user}
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `user`    | `string` | **Required**. ID/@Mention user |
+
 #### Create Tournament
 
 ```http
@@ -87,32 +119,6 @@ To deploy this project run
 | :-------- | :------- | :------------------------------------------------ |
 | `user`    | `string` | **Required**. ID/@Mention user                    |
 | `verify`  | `Bool`   | **Required**. Checked on bitmex TRUE or not FALSE |
-
-#### TOP 10 tournament
-
-```http
-   /poker_top
-```
-
-#### Tournament ID TOP 10
-
-```http
-   /poker_top_tournament ${fecha}
-```
-
-| Parameter | Type         | Description                      |
-| :-------- | :----------- | :------------------------------- |
-| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
-
-#### GET user
-
-```http
-   /poker_search ${user}
-```
-
-| Parameter | Type     | Description                    |
-| :-------- | :------- | :----------------------------- |
-| `user`    | `string` | **Required**. ID/@Mention user |
 
 ## SQL
 
