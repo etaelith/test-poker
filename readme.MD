@@ -200,6 +200,7 @@ CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
 - [serde](https://docs.rs/serde/latest/serde/)
 - [serde_json](https://docs.rs/serde_json/latest/serde_json/index.html)
 - [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
+- [chrono](https://docs.rs/chrono/latest/chrono/)
 
 #### Weird shit
 
