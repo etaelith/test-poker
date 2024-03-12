@@ -13,6 +13,7 @@ mod discord {
     pub mod handler;
     pub mod utils;
     pub mod commands {
+        pub mod bosses;
         pub mod bounties;
         pub mod points;
         pub mod poker;
@@ -23,6 +24,7 @@ use data_structs::Data;
 use db::config::setup_database;
 use discord::{
     commands::{
+        bosses::agree_boss,
         bounties::give_bounty,
         points::{sub_points, sum_points},
         poker::{poker_search, poker_top, poker_top_tournament, verified},
@@ -57,6 +59,7 @@ async fn main() {
                 poker_top_tournament(),
                 verified(),
                 checking(),
+                agree_boss(),
             ],
             ..Default::default()
         })

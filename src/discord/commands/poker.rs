@@ -124,7 +124,7 @@ pub async fn verified(
 #[command(slash_command, prefix_command)]
 pub async fn poker_top_tournament(
     ctx: Context<'_>,
-    #[description = "Insert Date (DD/MM/YYYY)"] fecha: String,
+    #[description = "Insert Date tournament (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {
     match parse_fecha(&fecha) {
         Ok(epoch_time) => match get_top_tournament(epoch_time) {

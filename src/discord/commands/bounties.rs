@@ -10,7 +10,7 @@ pub async fn give_bounty(
 
     #[description = "Amount (1-100)"] points: u32,
     #[description = "User (mention or ID)"] user: Option<User>,
-    #[description = "Insert Date (DD/MM/YYYY)"] fecha: String,
+    #[description = "Insert Date tournament(DD/MM/YYYY)"] fecha: String,
     #[description = "Won tournament? (true or false"] winner: Option<bool>,
 ) -> Result<(), Error> {
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");

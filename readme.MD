@@ -30,6 +30,16 @@ To deploy this project run
 | :-------- | :----------- | :------------------------------- |
 | `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
 
+#### Create guild_boss
+
+```http
+  /agree_boss ${user} ROLE NEEDED
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `user`    | `string` | **Required**. ID/@Mention user |
+
 #### Sumarized Points
 
 ```http
