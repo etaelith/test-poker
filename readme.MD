@@ -161,6 +161,15 @@ CREATE TABLE IF NOT EXISTS reward (
     FOREIGN KEY(user_id) REFERENCES users(user_id)
 );
 
+CREATE TABLE IF NOT EXISTS bosses (
+   boss_id INTEGER PRIMARY KEY,
+   user_id INTEGER,
+   user_name TEXT NOT NULL,
+   created_at TIMESTAMP,
+   updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+   FOREIGN KEY(user_id) REFERENCES users(user_id)
+);
+
 CREATE UNIQUE INDEX idx_bounty_winner ON bounties (tournament_id) WHERE bounty_winner = 1;
 CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
 ```
