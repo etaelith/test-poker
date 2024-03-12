@@ -87,7 +87,19 @@ To deploy this project run
 #### Substract points
 
 ```http
-   /sub_points ${points} ${user} ${fecha} ROLE NEEDED
+   /substract_points ${points} ${user} ${fecha} ROLE NEEDED
+```
+
+| Parameter | Type         | Description                      |
+| :-------- | :----------- | :------------------------------- |
+| `points`  | `INTEGER`    | **Required**. Number of BB       |
+| `user`    | `string`     | **Required**. ID/@Mention user   |
+| `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
+
+#### Delete points
+
+```http
+   /delete_points ${user} ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |

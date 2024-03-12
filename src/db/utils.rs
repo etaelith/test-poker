@@ -102,7 +102,7 @@ pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
         Ok(conn) => {
             match conn.execute(
                 "UPDATE users
-                SET points = (SELECT sum(points) FROM reward WHERE user_id = ?1)
+                SET points = COALESCE((SELECT sum(points) FROM reward WHERE user_id = ?1), 0)
                 WHERE user_id = ?1;",
                 params![user_id],
             ) {

@@ -26,7 +26,7 @@ use discord::{
     commands::{
         bosses::{agree_boss, test_test},
         bounties::give_bounty,
-        points::{sub_points, sum_points},
+        points::{delete_points, substract_points, sum_points},
         poker::{poker_search, poker_top, poker_top_tournament, verified},
         tournaments::{checking, create_tournament, get_tournaments},
     },
@@ -52,7 +52,8 @@ async fn main() {
             commands: vec![
                 create_tournament(),
                 sum_points(),
-                sub_points(),
+                substract_points(),
+                delete_points(),
                 give_bounty(),
                 poker_top(),
                 poker_search(),

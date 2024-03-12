@@ -9,14 +9,12 @@ use crate::{
 };
 
 use poise::command;
-use tokio::time::Instant;
 
 #[command(slash_command, prefix_command)]
 pub async fn create_tournament(
     ctx: Context<'_>,
     #[description = "Insert Date (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {
-    let start_time = Instant::now();
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
     match checked {
@@ -31,18 +29,9 @@ pub async fn create_tournament(
                                 Ok(_) => {
                                     send_message(
                                         &ctx,
-                                        format!(
-                                            "Torneo creado con éxito para la fecha: {}",
-                                            epoch_time
-                                        ),
+                                        format!("Torneo creado con éxito para la fecha: {}", fecha),
                                     )
                                     .await?;
-                                    let end_time = Instant::now();
-                                    let elapsed_time = end_time - start_time;
-                                    println!(
-                                        "create_tournament execution time: {:?}",
-                                        elapsed_time
-                                    );
                                 }
                                 Err(err) => {
                                     send_message(
