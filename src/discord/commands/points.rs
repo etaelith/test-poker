@@ -18,17 +18,14 @@ pub async fn sum_points(
 ) -> Result<(), Error> {
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
-
     match checked {
         Ok(true) => {
             if points < 1 || points > 100 {
                 send_message(&ctx, format!("Please choose points between 1 and 100.")).await?;
                 return Ok(());
             }
-
             let target_user = user.unwrap_or_else(|| ctx.author().clone());
             let user_id = i64::from(target_user.id);
-
             match parse_fecha(&fecha) {
                 Ok(epoch_time) => match tournament_exists(epoch_time) {
                     Ok(true) => {

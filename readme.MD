@@ -33,7 +33,7 @@ To deploy this project run
 #### Create guild_boss
 
 ```http
-  /agree_boss ${user} ROLE NEEDED
+  /agree_boss ${user} ROLE NEEDED ONLY OWNER
 ```
 
 | Parameter | Type     | Description                    |

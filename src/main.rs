@@ -24,11 +24,11 @@ use data_structs::Data;
 use db::config::setup_database;
 use discord::{
     commands::{
-        bosses::agree_boss,
+        bosses::{agree_boss, test_test},
         bounties::give_bounty,
         points::{sub_points, sum_points},
         poker::{poker_search, poker_top, poker_top_tournament, verified},
-        tournaments::{checking, create_tournament},
+        tournaments::{checking, create_tournament, get_tournaments},
     },
     handler::Handler,
 };
@@ -60,6 +60,8 @@ async fn main() {
                 verified(),
                 checking(),
                 agree_boss(),
+                test_test(),
+                get_tournaments(),
             ],
             ..Default::default()
         })

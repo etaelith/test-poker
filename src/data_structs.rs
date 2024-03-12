@@ -17,3 +17,8 @@ pub struct TopTen {
     pub position: u8,
     pub points: u16,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Tournaments {
+    pub tournament_date: String,
+}

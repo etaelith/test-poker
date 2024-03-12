@@ -20,7 +20,6 @@ pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
                         user.position, user.name, user.points
                     ));
                 }
-
                 let reply = CreateReply {
                     content: Some(message.clone()),
                     embeds: vec![],
@@ -54,10 +53,8 @@ pub async fn poker_search(
     #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
     let target_user = user.unwrap_or_else(|| ctx.author().clone());
-
     let user_id = target_user.id.into();
     let _ = get_user_rank(&target_user.name, user_id);
-
     match get_user_rank(&target_user.name, user_id) {
         Ok(response) => {
             if let Some(success_description) = response.success_description {

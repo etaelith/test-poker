@@ -716,7 +716,6 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "serenity",
  "tokio",
 ]
 

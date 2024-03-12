@@ -1,7 +1,8 @@
 use crate::{
-    data_structs::{Context, Error},
+    data_structs::{Context, Error, Tournaments},
     db::{
-        commands::table_tournaments::add_tournament, config::connect_database,
+        commands::table_tournaments::{add_tournament, get_tournaments_date},
+        config::connect_database,
         utils::tournament_exists,
     },
     discord::utils::{check_role, parse_fecha, send_message},
@@ -18,7 +19,6 @@ pub async fn create_tournament(
     let start_time = Instant::now();
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
-
     match checked {
         Ok(true) => {
             match parse_fecha(&fecha) {
@@ -81,6 +81,39 @@ pub async fn create_tournament(
         }
         Err(e) => {
             send_message(&ctx, format!("Hubo un error en la funcion checked {e}")).await?;
+        }
+    }
+
+    Ok(())
+}
+#[command(slash_command, prefix_command)]
+pub async fn get_tournaments(ctx: Context<'_>) -> Result<(), Error> {
+    match get_tournaments_date() {
+        Ok(response_status) => {
+            if response_status.success {
+                if let Some(description) = response_status.success_description {
+                    let tournaments: Vec<Tournaments> = serde_json::from_str(&description).unwrap();
+                    let formatted_tournaments = tournaments
+                        .iter()
+                        .map(|tournament| {
+                            format!("Tournament_date: {}", tournament.tournament_date)
+                        })
+                        .collect::<Vec<String>>()
+                        .join("\n");
+                    send_message(&ctx, formatted_tournaments).await?;
+                } else {
+                    send_message(&ctx, "description".to_owned()).await?;
+                }
+            } else {
+                if let Some(error_message) = response_status.error_message {
+                    send_message(&ctx, error_message).await?;
+                } else {
+                    send_message(&ctx, "content".to_owned()).await?;
+                }
+            }
+        }
+        Err(err) => {
+            send_message(&ctx, format!("{err}")).await?;
         }
     }
 

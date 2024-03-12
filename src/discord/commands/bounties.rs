@@ -4,10 +4,10 @@ use crate::{
     discord::utils::{check_role, parse_fecha, send_message},
 };
 use poise::{command, serenity_prelude::User};
+
 #[command(slash_command, prefix_command)]
 pub async fn give_bounty(
     ctx: Context<'_>,
-
     #[description = "Amount (1-100)"] points: u32,
     #[description = "User (mention or ID)"] user: Option<User>,
     #[description = "Insert Date tournament(DD/MM/YYYY)"] fecha: String,
@@ -21,10 +21,8 @@ pub async fn give_bounty(
                 send_message(&ctx, format!("Please choose points between 1 and 100.")).await?;
                 return Ok(());
             }
-
             let target_user = user.unwrap_or_else(|| ctx.author().clone());
             let user_id = i64::from(target_user.id);
-
             match parse_fecha(&fecha) {
                 Ok(epoch_time) => {
                     // Verificar la existencia del torneo antes de agregar el ganador
