@@ -5,7 +5,7 @@ use crate::{
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
 #[command(slash_command, prefix_command)]
-pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn top10(ctx: Context<'_>) -> Result<(), Error> {
     match get_top() {
         Ok(response) => {
             if let Some(success_description) = response.success_description {
@@ -48,7 +48,7 @@ pub async fn poker_top(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 #[command(slash_command, prefix_command)]
-pub async fn poker_search(
+pub async fn search_user(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
@@ -119,7 +119,7 @@ pub async fn verified(
 }
 
 #[command(slash_command, prefix_command)]
-pub async fn poker_top_tournament(
+pub async fn top10_tournament(
     ctx: Context<'_>,
     #[description = "Insert Date tournament (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {

@@ -29,13 +29,13 @@ To deploy this project run
 #### TOP 10 tournament
 
 ```http
-   /poker_top
+   /top10
 ```
 
 #### Tournament ID TOP 10
 
 ```http
-   /poker_top_tournament ${fecha}
+   /top10_tournament ${fecha}
 ```
 
 | Parameter | Type         | Description                      |
@@ -45,7 +45,7 @@ To deploy this project run
 #### GET user
 
 ```http
-   /poker_search ${user}
+   /search_user ${user}
 ```
 
 | Parameter | Type     | Description                    |
