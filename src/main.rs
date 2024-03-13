@@ -45,7 +45,7 @@ async fn main() {
     let _ = setup_database();
 
     let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
-    let intents: serenityGI = GatewayIntents::non_privileged();
+    let intents: serenityGI = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
 
     let framework = Framework::builder()
         .options(FrameworkOptions {

@@ -65,3 +65,28 @@ pub fn get_tournaments_date() -> Result<ResponseStatus, rusqlite::Error> {
         Err(conn_err) => Err(conn_err),
     }
 }
+pub fn get_last_tournament() -> Result<ResponseStatus, rusqlite::Error> {
+    match connect_database() {
+        Ok(conn) => {
+            let tournament_date: i64 = conn.query_row(
+                "SELECT last(tournament_date) FROM tournaments",
+                params![],
+                |row| row.get(0),
+            )?;
+
+            let date: String =
+                format_unix_timestamp(tournament_date).expect("Error on format_unix");
+
+            let data = Tournaments {
+                tournament_date: date,
+            };
+
+            Ok(ResponseStatus {
+                success: true,
+                success_description: Some(serde_json::to_string(&data).unwrap()),
+                error_message: None,
+            })
+        }
+        Err(conn_err) => Err(conn_err),
+    }
+}

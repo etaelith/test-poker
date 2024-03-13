@@ -3,7 +3,10 @@ use crate::{
     db::{config::connect_database, utils::insert_idiot},
     discord::utils::{check_id, send_message},
 };
-use poise::{command, serenity_prelude::User};
+use poise::{
+    command,
+    serenity_prelude::{builder, ChannelId, CreateEmbed, CreateMessage, User},
+};
 #[command(slash_command, prefix_command)]
 pub async fn agree_boss(
     ctx: Context<'_>,
@@ -42,5 +45,8 @@ pub async fn agree_boss(
 #[command(slash_command, prefix_command)]
 pub async fn test_test(ctx: Context<'_>) -> Result<(), Error> {
     check_id(&ctx).await?;
+
+    let _ = CreateMessage::new().content("test");
+
     Ok(())
 }
