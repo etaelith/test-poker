@@ -11,11 +11,19 @@ To learn more about the technologies used in this project, you can check out the
 To deploy this project run
 
 ```bash
-  docker build -t <PROJECT_NAME> .
+  docker build -t <project_name> .
 ```
 
 ```bash
-  docker run -e DISCORD_TOKEN=<ID> DB_PATH=<DB_PATH> ROLE_ADMIN=<ROLE_ID> <containerImage>
+  docker run -e DISCORD_TOKEN=<value> <containerImage>
+```
+
+## Discord msg handler
+
+#### Write top 10 and pin msg
+
+```http
+   !top
 ```
 
 ## Discord Slash Commands
