@@ -27,8 +27,8 @@ use discord::{
         bosses::{agree_boss, test_test},
         bounties::give_bounty,
         points::{delete_points, substract_points, sum_points},
-        poker::{search_user, top10, top10_tournament, verified},
-        tournaments::{checking, create_tournament, get_tournaments},
+        poker::{search_user, top10_tournament, verified},
+        tournaments::{checking, create_tournament, get_tournaments, top10, update_tables},
     },
     handler::Handler,
 };
@@ -63,6 +63,7 @@ async fn main() {
                 agree_boss(),
                 test_test(),
                 get_tournaments(),
+                update_tables(),
             ],
             ..Default::default()
         })

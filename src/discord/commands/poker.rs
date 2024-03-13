@@ -1,51 +1,12 @@
 use crate::{
     data_structs::{Context, Error, ResponseStatus, TopTen},
-    db::commands::table_users::{get_top, get_top_tournament, get_user_rank, verified_bitmex},
+    db::commands::{
+        table_tournaments::get_top_tournament,
+        table_users::{get_user_rank, verified_bitmex},
+    },
     discord::utils::{check_role, parse_fecha, send_message},
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
-#[command(slash_command, prefix_command)]
-pub async fn top10(ctx: Context<'_>) -> Result<(), Error> {
-    match get_top() {
-        Ok(response) => {
-            if let Some(success_description) = response.success_description {
-                let success_description_str: &str = &success_description;
-                let top_ten: Vec<TopTen> =
-                    serde_json::from_str(success_description_str).unwrap_or_default();
-
-                let mut message = String::from("Posiciones:\n");
-                for user in &top_ten {
-                    message.push_str(&format!(
-                        "{}. {}, Puntos: {}\n",
-                        user.position, user.name, user.points
-                    ));
-                }
-                let reply = CreateReply {
-                    content: Some(message.clone()),
-                    embeds: vec![],
-                    attachments: vec![],
-                    ephemeral: Some(true),
-                    components: None,
-                    allowed_mentions: None,
-                    reply: false,
-                    __non_exhaustive: (),
-                };
-                let _ = ctx.send(reply).await;
-            }
-        }
-        Err(err) => {
-            let error_response = ResponseStatus {
-                success: false,
-                success_description: None,
-                error_message: Some(err.to_string()),
-            };
-
-            let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
-        }
-    }
-
-    Ok(())
-}
 
 #[command(slash_command, prefix_command)]
 pub async fn search_user(
@@ -98,12 +59,18 @@ pub async fn verified(
             let user_id = i64::from(target_user.id);
             match verified_bitmex(user_id, winner.unwrap(), &target_user.name) {
                 Ok(_) => {
-                    send_message(&ctx, format!("State verify changed to {}", winner.unwrap()))
-                        .await?;
+                    send_message(
+                        &ctx,
+                        format!(
+                            "State verify from {} changed to {}",
+                            target_user.name,
+                            winner.unwrap()
+                        ),
+                    )
+                    .await?;
                 }
                 Err(err) => {
-                    send_message(&ctx, format!("Hubo un error al insertar el reward: {err}"))
-                        .await?;
+                    send_message(&ctx, format!("Hubo un error al cambiar verify: {err}")).await?;
                 }
             }
         }

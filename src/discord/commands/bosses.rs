@@ -5,7 +5,7 @@ use crate::{
 };
 use poise::{
     command,
-    serenity_prelude::{builder, ChannelId, CreateEmbed, CreateMessage, User},
+    serenity_prelude::{CreateMessage, User},
 };
 #[command(slash_command, prefix_command)]
 pub async fn agree_boss(

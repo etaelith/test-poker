@@ -1,9 +1,8 @@
 use crate::{
     data_structs::{Context, Error, ResponseStatus, TopTen, Tournaments},
     db::{
-        commands::{
-            table_tournaments::{add_tournament, get_last_tournament, get_tournaments_date},
-            table_users::get_top,
+        commands::table_tournaments::{
+            add_tournament, get_top, get_top_tournament, get_tournaments_date,
         },
         config::connect_database,
         utils::tournament_exists,
@@ -11,7 +10,11 @@ use crate::{
     discord::utils::{check_role, parse_fecha, send_message},
 };
 
-use poise::{command, say_reply};
+use poise::{
+    command, say_reply,
+    serenity_prelude::{CreateEmbed, CreateMessage},
+    CreateReply,
+};
 
 #[command(slash_command, prefix_command)]
 pub async fn create_tournament(
@@ -111,63 +114,150 @@ pub async fn get_tournaments(ctx: Context<'_>) -> Result<(), Error> {
 
     Ok(())
 }
+
+#[command(slash_command, prefix_command)]
+pub async fn top10(ctx: Context<'_>) -> Result<(), Error> {
+    match get_top() {
+        Ok(response) => {
+            if let Some(success_description) = response.success_description {
+                let success_description_str: &str = &success_description;
+                let top_ten: Vec<TopTen> =
+                    serde_json::from_str(success_description_str).unwrap_or_default();
+
+                let mut message = String::from("Posiciones:\n");
+                for user in &top_ten {
+                    message.push_str(&format!(
+                        "{}. {}, Puntos: {}\n",
+                        user.position, user.name, user.points
+                    ));
+                }
+                let reply = CreateReply {
+                    content: Some(message.clone()),
+                    embeds: vec![],
+                    attachments: vec![],
+                    ephemeral: Some(true),
+                    components: None,
+                    allowed_mentions: None,
+                    reply: false,
+                    __non_exhaustive: (),
+                };
+                let _ = ctx.send(reply).await;
+            }
+        }
+        Err(err) => {
+            let error_response = ResponseStatus {
+                success: false,
+                success_description: None,
+                error_message: Some(err.to_string()),
+            };
+
+            let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
+        }
+    }
+
+    Ok(())
+}
+
+#[command(slash_command, prefix_command)]
+pub async fn top10_tournament(
+    ctx: Context<'_>,
+    #[description = "Insert Date tournament (DD/MM/YYYY)"] fecha: String,
+) -> Result<(), Error> {
+    match parse_fecha(&fecha) {
+        Ok(epoch_time) => match get_top_tournament(epoch_time) {
+            Ok(response) => {
+                if let Some(success_description) = response.success_description {
+                    let success_description_str: &str = &success_description;
+                    let top_ten: Vec<TopTen> =
+                        serde_json::from_str(success_description_str).unwrap_or_default();
+
+                    let mut message = String::from("Posiciones:\n");
+                    for user in &top_ten {
+                        message.push_str(&format!(
+                            "{}. {}, Puntos: {}\n",
+                            user.position, user.name, user.points
+                        ));
+                    }
+
+                    let reply = CreateReply {
+                        content: Some(message.clone()),
+                        embeds: vec![],
+                        attachments: vec![],
+                        ephemeral: Some(true),
+                        components: None,
+                        allowed_mentions: None,
+                        reply: false,
+                        __non_exhaustive: (),
+                    };
+                    let _ = ctx.send(reply).await;
+                }
+            }
+            Err(err) => {
+                let error_response = ResponseStatus {
+                    success: false,
+                    success_description: None,
+                    error_message: Some(err.to_string()),
+                };
+
+                let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
+            }
+        },
+        Err(_) => {
+            send_message(
+                &ctx,
+                format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+            )
+            .await?;
+        }
+    }
+
+    Ok(())
+}
+
 #[command(slash_command, prefix_command)]
 pub async fn update_tables(ctx: Context<'_>) -> Result<(), Error> {
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
 
     match checked {
-        Ok(true) => {
-            // Check and process get_last_tournament
-            /* match get_last_tournament() {
-                Ok(tournament_response) => {
-                    if let Some(success_description) = tournament_response.success_description {
-                        let success_description_str: &str = &success_description;
-                        let tournament_data: Tournaments =
-                            serde_json::from_str(success_description_str).unwrap_or_default();
+        Ok(true) => match get_top() {
+            Ok(response) => {
+                if response.success {
+                    let top_users: Vec<TopTen> =
+                        serde_json::from_str(&response.success_description.unwrap()).unwrap();
 
-                        // Handle tournament_data as needed
+                    let mut fields_vec = Vec::new();
+                    for user in top_users {
+                        fields_vec.push((
+                            format!("Posición {}", user.position),
+                            format!("{}: {} puntos", user.name, user.points),
+                            false,
+                        ));
                     }
-                }
-                Err(err) => {
-                    let error_response = ResponseStatus {
-                        success: false,
-                        success_description: None,
-                        error_message: Some(err.to_string()),
-                    };
 
-                    let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
-                }
-            } */
+                    let embed = CreateEmbed::new()
+                        .title("Top 10 Usuarios")
+                        .fields(fields_vec);
 
-            // Check and process get_top
-            match get_top() {
-                Ok(response) => {
-                    if let Some(success_description) = response.success_description {
-                        let success_description_str: &str = &success_description;
-                        let top_ten: Vec<TopTen> =
-                            serde_json::from_str(success_description_str).unwrap_or_default();
+                    let builder = CreateMessage::new().embed(embed);
 
-                        let mut message = String::from("Posiciones:\n");
-                        for user in &top_ten {
-                            message.push_str(&format!(
-                                "{}. {}, Puntos: {}\n",
-                                user.position, user.name, user.points
-                            ));
-                        }
+                    let msg = ctx.channel_id().send_message(&ctx.http(), builder).await;
+                    if let Err(why) = msg {
+                        println!("Error sending message: {:?}", why);
                     }
-                }
-                Err(err) => {
-                    let error_response = ResponseStatus {
-                        success: false,
-                        success_description: None,
-                        error_message: Some(err.to_string()),
-                    };
-
-                    let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
+                } else {
+                    let builder =
+                        CreateMessage::new().content("Error al obtener el top 10 de usuarios");
+                    let msg = ctx.channel_id().send_message(&ctx.http(), builder).await;
+                    if let Err(why) = msg {
+                        println!("Error sending message: {:?}", why);
+                    }
                 }
             }
-        }
+            Err(err) => {
+                println!("Error al conectar a la base de datos: {:?}", err);
+            }
+        },
         Ok(false) => println!("Role'nt checked: false -"),
         Err(e) => println!("Error checking role: {:?}", e),
     }
