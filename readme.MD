@@ -6,6 +6,33 @@ This project is a Dockerized Discord bot written in Rust, designed to keep track
 
 To learn more about the technologies used in this project, you can check out the following documentation:
 
+```
+\SRC
+│   data_structs.rs
+│   main.rs
+│
+├───db
+│   │   config.rs
+│   │   utils.rs
+│   │
+│   └───commands
+│           table_bounties.rs
+│           table_reward.rs
+│           table_tournaments.rs
+│           table_users.rs
+│
+└───discord
+    │   handler.rs
+    │   utils.rs
+    │
+    └───commands
+            bosses.rs
+            bounties.rs
+            points.rs
+            poker.rs
+            tournaments.rs
+```
+
 ## Deployment
 
 To deploy this project run
