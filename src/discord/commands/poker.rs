@@ -1,10 +1,7 @@
 use crate::{
-    data_structs::{Context, Error, ResponseStatus, TopTen},
-    db::commands::{
-        table_tournaments::get_top_tournament,
-        table_users::{get_user_rank, verified_bitmex},
-    },
-    discord::utils::{check_role, parse_fecha, send_message},
+    data_structs::{Context, Error, ResponseStatus},
+    db::commands::table_users::{get_user_rank, verified_bitmex},
+    discord::utils::{check_role, send_message},
 };
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
 
@@ -79,62 +76,6 @@ pub async fn verified(
         }
         Err(e) => {
             send_message(&ctx, format!("No tenes el role necesario {:?}", e)).await?;
-        }
-    }
-
-    Ok(())
-}
-
-#[command(slash_command, prefix_command)]
-pub async fn top10_tournament(
-    ctx: Context<'_>,
-    #[description = "Insert Date tournament (DD/MM/YYYY)"] fecha: String,
-) -> Result<(), Error> {
-    match parse_fecha(&fecha) {
-        Ok(epoch_time) => match get_top_tournament(epoch_time) {
-            Ok(response) => {
-                if let Some(success_description) = response.success_description {
-                    let success_description_str: &str = &success_description;
-                    let top_ten: Vec<TopTen> =
-                        serde_json::from_str(success_description_str).unwrap_or_default();
-
-                    let mut message = String::from("Posiciones:\n");
-                    for user in &top_ten {
-                        message.push_str(&format!(
-                            "{}. {}, Puntos: {}\n",
-                            user.position, user.name, user.points
-                        ));
-                    }
-
-                    let reply = CreateReply {
-                        content: Some(message.clone()),
-                        embeds: vec![],
-                        attachments: vec![],
-                        ephemeral: Some(true),
-                        components: None,
-                        allowed_mentions: None,
-                        reply: false,
-                        __non_exhaustive: (),
-                    };
-                    let _ = ctx.send(reply).await;
-                }
-            }
-            Err(err) => {
-                let error_response = ResponseStatus {
-                    success: false,
-                    success_description: None,
-                    error_message: Some(err.to_string()),
-                };
-
-                let _ = say_reply(ctx, &serde_json::to_string(&error_response).unwrap()).await;
-            }
-        },
-        Err(_) => {
-            send_message(
-                &ctx,
-                format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
-            )
-            .await?;
         }
     }
 
