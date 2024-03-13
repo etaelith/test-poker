@@ -42,10 +42,20 @@ To deploy this project run
 | :-------- | :----------- | :------------------------------- |
 | `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament |
 
-#### GET user
+#### GET user (rank & points)
 
 ```http
    /search_user ${user}
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `user`    | `string` | **Required**. ID/@Mention user |
+
+#### GET user_info (general data)
+
+```http
+   /info_user ${user}
 ```
 
 | Parameter | Type     | Description                    |
