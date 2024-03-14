@@ -8,14 +8,17 @@ To learn more about the technologies used in this project, you can check out the
 
 ```
 \SRC
+│   auth.rs
 │   data_structs.rs
 │   main.rs
 │
 ├───db
 │   │   config.rs
+│   │   mod.rs
 │   │   utils.rs
 │   │
 │   └───commands
+│           mod.rs
 │           table_bounties.rs
 │           table_reward.rs
 │           table_tournaments.rs
@@ -23,11 +26,13 @@ To learn more about the technologies used in this project, you can check out the
 │
 └───discord
     │   handler.rs
+    │   mod.rs
     │   utils.rs
     │
     └───commands
             bosses.rs
             bounties.rs
+            mod.rs
             points.rs
             poker.rs
             tournaments.rs
