@@ -44,44 +44,48 @@ use poise::{
 
 #[tokio::main]
 async fn main() {
-    let _ = setup_database();
+    let discord_handle = tokio::spawn(async {
+        let _ = setup_database();
 
-    let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
-    let intents: serenityGI = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
+        let token = std::env::var("DISCORD_TOKEN").expect("missing DISCORD_TOKEN");
+        let intents: serenityGI =
+            GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
 
-    let framework = Framework::builder()
-        .options(FrameworkOptions {
-            commands: vec![
-                create_tournament(),
-                sum_points(),
-                substract_points(),
-                delete_points(),
-                give_bounty(),
-                top10(),
-                search_user(),
-                top10_tournament(),
-                verified(),
-                checking(),
-                agree_boss(),
-                test_test(),
-                get_tournaments(),
-                update_tables(),
-                info_user(),
-                verified_twitch(),
-            ],
-            ..Default::default()
-        })
-        .setup(|ctx, _ready, framework| {
-            Box::pin(async move {
-                builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data {})
+        let framework = Framework::builder()
+            .options(FrameworkOptions {
+                commands: vec![
+                    create_tournament(),
+                    sum_points(),
+                    substract_points(),
+                    delete_points(),
+                    give_bounty(),
+                    top10(),
+                    search_user(),
+                    top10_tournament(),
+                    verified(),
+                    checking(),
+                    agree_boss(),
+                    test_test(),
+                    get_tournaments(),
+                    update_tables(),
+                    info_user(),
+                    verified_twitch(),
+                ],
+                ..Default::default()
             })
-        })
-        .build();
+            .setup(|ctx, _ready, framework| {
+                Box::pin(async move {
+                    builtins::register_globally(ctx, &framework.options().commands).await?;
+                    Ok(Data {})
+                })
+            })
+            .build();
 
-    let client = ClientBuilder::new(token, intents)
-        .event_handler(Handler)
-        .framework(framework)
-        .await;
-    client.unwrap().start().await.unwrap();
+        let client = ClientBuilder::new(token, intents)
+            .event_handler(Handler)
+            .framework(framework)
+            .await;
+        client.unwrap().start().await.unwrap();
+    });
+    let _ = discord_handle.await.unwrap();
 }
