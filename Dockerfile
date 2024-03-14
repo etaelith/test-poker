@@ -26,4 +26,4 @@ ENV ROLE_ADMIN=1214016146559471656
 
 CMD [ "./idiotita-poker" ]
 
-# docker run -e DISCORD_TOKEN=<value> <containerImage>
+# docker run -e DISCORD_TOKEN=<value> CLIENT_ID=<value> CLIENT_SECRET=<value> <containerImage>

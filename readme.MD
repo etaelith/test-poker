@@ -35,6 +35,8 @@ To learn more about the technologies used in this project, you can check out the
 
 ## Deployment
 
+### Docker (need update)
+
 To deploy this project run
 
 ```bash
@@ -43,6 +45,16 @@ To deploy this project run
 
 ```bash
   docker run -e DISCORD_TOKEN=<value> <containerImage>
+```
+
+### Cargo
+
+```bash
+   cargo build
+```
+
+```bash
+   DISCORD_TOKEN=<value> CLIENT_ID=<value> CLIENT_SECRET=<value> PORT=<value> cargo run
 ```
 
 ## Discord msg handler

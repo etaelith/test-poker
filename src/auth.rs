@@ -7,8 +7,8 @@ use crate::data_structs::Connection;
 #[get("/api/auth/discord/redirect")]
 async fn redirect(req: web::Query<HashMap<String, String>>) -> impl Responder {
     if let Some(code) = req.get("code") {
-        let client_id = env::var("CLIENTID").expect("CLIENTID not set");
-        let client_secret = env::var("CLIENTSECRET").expect("CLIENTSECRET not set");
+        let client_id = env::var("CLIENT_ID").expect("CLIENT_ID not set");
+        let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET not set");
         let redirect_uri = "http://localhost:1500/api/auth/discord/redirect";
 
         let mut params = std::collections::HashMap::new();
