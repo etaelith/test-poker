@@ -22,3 +22,11 @@ pub struct TopTen {
 pub struct Tournaments {
     pub tournament_date: String,
 }
+
+#[derive(Debug, serde::Deserialize)]
+pub struct Connection {
+    #[serde(rename = "type")]
+    pub connection_type: String,
+    pub id: String,
+    pub name: String,
+}
