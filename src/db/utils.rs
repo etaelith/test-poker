@@ -96,6 +96,23 @@ pub fn insert_user(conn: &Connection, id_user: i64, tag_user: &str) -> Result<Re
         }),
     }
 }
+pub fn insert_twitch_tag(
+    id_user: i64,
+    user_twitch: &str,
+) -> Result<ResponseStatus, rusqlite::Error> {
+    let conn = connect_database()?;
+    match conn.execute(
+        "UPDATE users SET user_twitch = ?1 WHERE user_id = ?2",
+        params![user_twitch, id_user],
+    ) {
+        Ok(_) => Ok(ResponseStatus {
+            success: true,
+            success_description: Some(format!("Agreed {}", user_twitch)),
+            error_message: None,
+        }),
+        Err(err) => Err(err.into()),
+    }
+}
 
 pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
     match connect_database() {

@@ -41,7 +41,7 @@ pub fn get_user_info(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rus
         Ok(conn) => {
             let exists: bool = user_exists(&conn, id_user)?;
             if exists {
-                let mut stmt = conn.prepare("SELECT user_name, points, bitmex, wins, bounties FROM users WHERE user_id = ?1")?;
+                let mut stmt = conn.prepare("SELECT user_name, points, bitmex, wins, bounties, user_twitch FROM users WHERE user_id = ?1")?;
                 let mut rows = stmt.query(params![id_user])?;
                 if let Some(row) = rows.next()? {
                     let user_name: String = row.get(0)?;
@@ -49,12 +49,19 @@ pub fn get_user_info(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rus
                     let bitmex: bool = row.get(2)?;
                     let wins: i64 = row.get(3)?;
                     let bounties: i64 = row.get(4)?;
+                    let user_twitch: Option<String> = row.get(5)?;
+
+                    let twitch_display = if let Some(twitch) = user_twitch {
+                        twitch
+                    } else {
+                        "No asociado".to_string()
+                    };
 
                     Ok(ResponseStatus {
                         success: true,
                         success_description: Some(format!(
-                            "User: {} \n Points: {} \n Verify: {} \n Wins: {} \n Bounties: {} \n",
-                            user_name, points, bitmex, wins, bounties
+                            "User: {} \n Points: {} \n Verify: {} \n Wins: {} \n Bounties: {} \n Twitch: {}",
+                            user_name, points, bitmex, wins, bounties, twitch_display
                         )),
                         error_message: None,
                     })
@@ -62,12 +69,13 @@ pub fn get_user_info(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rus
                     Err(rusqlite::Error::QueryReturnedNoRows)
                 }
             } else {
-                return insert_user(&conn, id_user, tag_user);
+                insert_user(&conn, id_user, tag_user)
             }
         }
         Err(conn_err) => Err(conn_err),
     }
 }
+
 pub fn verified_bitmex(
     id_user: i64,
     state: bool,

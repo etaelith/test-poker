@@ -11,6 +11,7 @@ pub fn setup_database() -> Result<Connection> {
         bitmex BOOLEAN DEFAULT 0,
         created_at TIMESTAMP,
         wins INTEGER DEFAULT 0,
+        user_twitch TEXT,
         bounties INTEGER DEFAULT 0,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
 

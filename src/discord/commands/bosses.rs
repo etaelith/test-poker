@@ -3,10 +3,7 @@ use crate::{
     db::{config::connect_database, utils::insert_idiot},
     discord::utils::{check_id, send_message},
 };
-use poise::{
-    command,
-    serenity_prelude::{CreateMessage, User},
-};
+use poise::{command, serenity_prelude::User};
 #[command(slash_command, prefix_command)]
 pub async fn agree_boss(
     ctx: Context<'_>,
@@ -44,9 +41,19 @@ pub async fn agree_boss(
 
 #[command(slash_command, prefix_command)]
 pub async fn test_test(ctx: Context<'_>) -> Result<(), Error> {
-    check_id(&ctx).await?;
+    match ctx.author_member().await {
+        Some(member) => {
+            // Aquí puedes imprimir o hacer lo que necesites con el `Member`
+            println!("{:?}", member);
 
-    let _ = CreateMessage::new().content("test");
+            // Resto de tu lógica aquí...
 
-    Ok(())
+            Ok(())
+        }
+        None => {
+            // Manejar el caso en que no se encuentra un miembro
+            println!("No se encontró el miembro");
+            Ok(())
+        }
+    }
 }
