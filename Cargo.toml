@@ -7,13 +7,15 @@ edition = "2021"
 
 [dependencies]
 tokio = {version = "1.36.0", features = ["macros","rt-multi-thread"]}
+reqwest = { version = "0.11", features = ["json","blocking"] }
+rusqlite = {version = "0.31", features = ["bundled"]}
 poise = "0.6.1"
 serde = "1.0"
 serde_json = "1.0"
 serde_derive = "1.0"
-rusqlite = {version = "0.31", features = ["bundled"]}
 chrono = "0.4.35"
-reqwest = { version = "0.11", features = ["json"] }
 actix-web = "4"
 dotenv = "0.15.0"
 env_logger = "0.9.0"
+hmac = "0.10"
+sha2 = "0.9"
