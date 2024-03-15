@@ -8,6 +8,8 @@ use poise::{
 
 use crate::{data_structs::Data, db::config::setup_database};
 
+use self::commands::verify::verify_twitch;
+
 use {
     commands::{
         bosses::{agree_boss, test_test},
@@ -52,6 +54,7 @@ pub async fn setup_discord() -> tokio::task::JoinHandle<()> {
                     update_tables(),
                     info_user(),
                     verified_twitch(),
+                    verify_twitch(),
                 ],
                 ..Default::default()
             })

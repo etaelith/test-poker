@@ -183,7 +183,13 @@ To deploy this project run
 | `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                |
 | `win`     | `Bool`       | **Required**. Win tournament TRUE, Bounty FALSE |
 
-#### Give verified
+#### Verify twitch name
+
+```http
+   /verify_twitch
+```
+
+#### Give verified bitmex manual
 
 ```http
    /verifed ${user} ${verify} ROLE NEEDED

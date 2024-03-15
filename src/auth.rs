@@ -1,8 +1,14 @@
 use actix_web::{get, web, HttpResponse, Responder};
-
+use poise::serenity_prelude::User;
 use std::{collections::HashMap, env};
 
-use crate::data_structs::Connection;
+use crate::{
+    data_structs::Connection,
+    db::{
+        config::connect_database,
+        utils::{insert_twitch_tag, insert_user, user_exists},
+    },
+};
 
 #[get("/api/auth/discord/redirect")]
 async fn redirect(req: web::Query<HashMap<String, String>>) -> impl Responder {
@@ -40,12 +46,40 @@ async fn redirect(req: web::Query<HashMap<String, String>>) -> impl Responder {
                 .json::<Vec<Connection>>()
                 .await
                 .expect("Failed to parse response");
+            let user: User = client
+                .get("https://discord.com/api/v10/users/@me")
+                .header("Authorization", format!("Bearer {}", access))
+                .send()
+                .await
+                .expect("Failed to send request")
+                .json::<User>()
+                .await
+                .expect("Failed to parse response");
 
             if let Some(twitch_connection) = connections
                 .iter()
                 .find(|conn| conn.connection_type == "twitch")
             {
-                println!("{:?}", twitch_connection);
+                println!("{}", twitch_connection.name);
+                println!("{}", user.id);
+                match connect_database() {
+                    Ok(conn) => match user_exists(&conn, user.id.into()) {
+                        Ok(exists) => {
+                            if exists {
+                                let _ = insert_twitch_tag(user.id.into(), &twitch_connection.name);
+                            } else {
+                                let _ = insert_user(&conn, user.id.into(), &user.name);
+                                let _ = insert_twitch_tag(user.id.into(), &twitch_connection.name);
+                            }
+                        }
+                        Err(e) => {
+                            eprintln!("Error checking if user exists: {}", e);
+                        }
+                    },
+                    Err(conn_err) => {
+                        eprintln!("Error connecting db{}", conn_err)
+                    }
+                }
             } else {
                 println!("No Twitch connection found");
             }
