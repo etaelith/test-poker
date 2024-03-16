@@ -33,7 +33,7 @@ pub async fn verify_twitch(ctx: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-pub async fn get_user_data(
+pub async fn call_verify_bitmex(
     api_key: String,
     api_secret: String,
 ) -> Result<(), Box<dyn std::error::Error>> {

@@ -6,8 +6,6 @@ use poise::serenity_prelude::{
 use crate::data_structs::TopTen;
 use crate::db::commands::table_tournaments::get_top;
 
-use super::commands::verify::get_user_data;
-
 pub struct Handler;
 #[async_trait]
 impl EventHandler for Handler {
@@ -74,21 +72,6 @@ impl EventHandler for Handler {
                     println!("Error al conectar a la base de datos: {:?}", err);
                 }
             }
-        }
-        if msg.content == "!collect" {
-            let mut collected_messages = Vec::new();
-            let channel = msg.author.create_dm_channel(&ctx).await.unwrap();
-            channel.say(&ctx, "Direct Message").await.unwrap();
-            while collected_messages.len() < 2 {
-                // Espera hasta que se reciban los dos mensajes
-                if let Some(message) = msg.author.await_reply(&ctx).await {
-                    println!("Msg taked: {:?}", message.content);
-                    collected_messages.push(message.content);
-                }
-            }
-            let api_key = &collected_messages[0];
-            let api_secret = &collected_messages[1];
-            let _ = get_user_data(api_key.clone(), api_secret.clone()).await;
         }
     }
     async fn resume(&self, _: Context, _: ResumedEvent) {

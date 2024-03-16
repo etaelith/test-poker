@@ -114,72 +114,41 @@ pub fn insert_twitch_tag(
     }
 }
 
-pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
+pub fn insert_twitch(
+    user_id: i64,
+    user_name: String,
+    twitch_connection_name: String,
+) -> Result<ResponseStatus, rusqlite::Error> {
     match connect_database() {
-        Ok(conn) => {
-            match conn.execute(
-                "UPDATE users
-                SET points = COALESCE((SELECT sum(points) FROM reward WHERE user_id = ?1), 0)
-                WHERE user_id = ?1;",
-                params![user_id],
-            ) {
-                Ok(_) => Ok(ResponseStatus {
-                    success: true,
-                    success_description: Some(format!("Updated points to {user_id}")),
-                    error_message: None,
-                }),
-                Err(err) => Ok(ResponseStatus {
-                    success: false,
-                    success_description: None,
-                    error_message: Some(err.to_string()),
-                }),
-            }
-        }
-        Err(conn_err) => Err(conn_err),
-    }
-}
-
-pub fn update_bounties(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
-    match connect_database() {
-        Ok(conn) => {
-            match conn.execute(
-                "UPDATE users
-                SET wins = (
-                    SELECT COUNT(*)
-                    FROM bounties
-                    WHERE user_id = ?1 AND bounty_winner = TRUE
-                )
-                WHERE user_id = ?1;",
-                params![user_id],
-            ) {
-                Ok(_) => match conn.execute(
-                    "UPDATE users
-                    SET bounties = (
-                        SELECT COUNT(*)
-                        FROM bounties
-                        WHERE user_id = ?1 AND bounty_winner = FALSE
-                    )
-                    WHERE user_id = ?1;",
-                    params![user_id],
-                ) {
-                    Ok(_) => Ok(ResponseStatus {
+        Ok(conn) => match user_exists(&conn, user_id.into()) {
+            Ok(exists) => {
+                if exists {
+                    let _ = insert_twitch_tag(user_id, &twitch_connection_name);
+                    Ok(ResponseStatus {
                         success: true,
-                        success_description: Some(format!("Bounties updated for: {user_id}")),
+                        success_description: Some("Twitch tag inserted successfully".to_string()),
                         error_message: None,
-                    }),
-                    Err(err) => Ok(ResponseStatus {
-                        success: false,
-                        success_description: None,
-                        error_message: Some(err.to_string()),
-                    }),
-                },
-                Err(err) => Ok(ResponseStatus {
-                    success: false,
-                    success_description: None,
-                    error_message: Some(err.to_string()),
-                }),
+                    })
+                } else {
+                    let _ = insert_user(&conn, user_id.clone(), &user_name);
+                    let _ = insert_twitch_tag(user_id.clone(), &twitch_connection_name);
+                    Ok(ResponseStatus {
+                        success: true,
+                        success_description: Some(
+                            "User and Twitch tag inserted successfully".to_string(),
+                        ),
+                        error_message: None,
+                    })
+                }
             }
+            Err(e) => {
+                eprintln!("Error checking if user exists: {}", e);
+                Err(e)
+            }
+        },
+        Err(conn_err) => {
+            eprintln!("Error connecting db{}", conn_err);
+            Err(conn_err)
         }
-        Err(conn_err) => Err(conn_err),
     }
 }

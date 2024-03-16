@@ -4,7 +4,7 @@ use crate::{
     data_structs::ResponseStatus,
     db::{
         config::connect_database,
-        utils::{insert_user, update_points, user_exists},
+        utils::{insert_user, user_exists},
     },
 };
 
@@ -112,4 +112,28 @@ pub fn delete_reward(user_id: i64, tournament_id: i64) -> Result<ResponseStatus,
         success_description: None,
         error_message: None,
     })
+}
+fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
+    match connect_database() {
+        Ok(conn) => {
+            match conn.execute(
+                "UPDATE users
+                SET points = COALESCE((SELECT sum(points) FROM reward WHERE user_id = ?1), 0)
+                WHERE user_id = ?1;",
+                params![user_id],
+            ) {
+                Ok(_) => Ok(ResponseStatus {
+                    success: true,
+                    success_description: Some(format!("Updated points to {user_id}")),
+                    error_message: None,
+                }),
+                Err(err) => Ok(ResponseStatus {
+                    success: false,
+                    success_description: None,
+                    error_message: Some(err.to_string()),
+                }),
+            }
+        }
+        Err(conn_err) => Err(conn_err),
+    }
 }
