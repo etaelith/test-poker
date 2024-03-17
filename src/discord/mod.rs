@@ -8,16 +8,20 @@ use poise::{
 
 use crate::{data_structs::Data, db::config::setup_database};
 
-use self::commands::{test::verify_bitmex, verify::verify_twitch};
+use self::commands::{
+    test::poker_verify,
+    verify::{poker_verify_bitmex, poker_verify_twitch},
+};
 
 use {
     commands::{
-        bosses::{agree_boss, test_test},
-        bounties::give_bounty,
-        points::{delete_points, substract_points, sum_points},
-        poker::{info_user, search_user, verified, verified_twitch},
+        bosses::admin_agree_boss,
+        bounties::admin_give_bounty,
+        points::{admin_delete_points, admin_substract_points, admin_sum_points},
+        poker::{admin_verify_bitmex, admin_verify_twitch, poker_info_user, poker_search_user},
         tournaments::{
-            checking, create_tournament, get_tournaments, top10, top10_tournament, update_tables,
+            admin_create_tournament, admin_update_tables, checking, poker_get_tournaments,
+            poker_top10, poker_top10_tournament,
         },
     },
     handler::Handler,
@@ -38,30 +42,35 @@ pub async fn setup_discord() -> tokio::task::JoinHandle<()> {
         let framework = Framework::builder()
             .options(FrameworkOptions {
                 commands: vec![
-                    create_tournament(),
-                    sum_points(),
-                    substract_points(),
-                    delete_points(),
-                    give_bounty(),
-                    top10(),
-                    search_user(),
-                    top10_tournament(),
-                    verified(),
+                    admin_create_tournament(),
+                    admin_sum_points(),
+                    admin_substract_points(),
+                    admin_delete_points(),
+                    admin_give_bounty(),
+                    poker_top10(),
+                    poker_search_user(),
+                    poker_top10_tournament(),
+                    admin_verify_bitmex(),
                     checking(),
-                    agree_boss(),
-                    test_test(),
-                    get_tournaments(),
-                    update_tables(),
-                    info_user(),
-                    verified_twitch(),
-                    verify_twitch(),
-                    verify_bitmex(),
+                    admin_agree_boss(),
+                    poker_get_tournaments(),
+                    admin_update_tables(),
+                    poker_info_user(),
+                    admin_verify_twitch(),
+                    poker_verify_twitch(),
+                    poker_verify_bitmex(),
+                    poker_verify(),
                 ],
                 ..Default::default()
             })
             .setup(|ctx, _ready, framework| {
                 Box::pin(async move {
-                    builtins::register_globally(ctx, &framework.options().commands).await?;
+                    builtins::register_in_guild(
+                        ctx,
+                        &framework.options().commands,
+                        1213686647225581598.into(),
+                    )
+                    .await?;
                     Ok(Data {})
                 })
             })

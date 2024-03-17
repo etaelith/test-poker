@@ -1,0 +1,7 @@
+unset DISCORD_TOKEN
+unset DB_PATH
+unset ROLE_ADMIN
+unset CLIENT_ID
+unset CLIENT_SECRET
+unset PORT
+unset GUILD_ID

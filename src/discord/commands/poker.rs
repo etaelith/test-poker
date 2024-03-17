@@ -9,7 +9,7 @@ use crate::{
 use poise::{command, say_reply, serenity_prelude::User, CreateReply};
 
 #[command(slash_command, prefix_command)]
-pub async fn search_user(
+pub async fn poker_search_user(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
@@ -44,7 +44,7 @@ pub async fn search_user(
     Ok(())
 }
 #[command(slash_command, prefix_command)]
-pub async fn info_user(
+pub async fn poker_info_user(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
@@ -79,7 +79,7 @@ pub async fn info_user(
     Ok(())
 }
 #[command(slash_command, prefix_command)]
-pub async fn verified_twitch(
+pub async fn admin_verify_twitch(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user_id: Option<User>,
     #[description = "User (mention or ID)"] user_twitch: Option<String>,
@@ -112,7 +112,7 @@ pub async fn verified_twitch(
 }
 
 #[command(slash_command, prefix_command)]
-pub async fn verified(
+pub async fn admin_verify_bitmex(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user: Option<User>,
     #[description = "Verify? (true or false"] winner: Option<bool>,

@@ -17,7 +17,7 @@ use poise::{
 };
 
 #[command(slash_command, prefix_command)]
-pub async fn create_tournament(
+pub async fn admin_create_tournament(
     ctx: Context<'_>,
     #[description = "Insert Date (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {
@@ -82,7 +82,7 @@ pub async fn create_tournament(
     Ok(())
 }
 #[command(slash_command, prefix_command)]
-pub async fn get_tournaments(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn poker_get_tournaments(ctx: Context<'_>) -> Result<(), Error> {
     match get_tournaments_date() {
         Ok(response_status) => {
             if response_status.success {
@@ -116,7 +116,7 @@ pub async fn get_tournaments(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 #[command(slash_command, prefix_command)]
-pub async fn top10(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn poker_top10(ctx: Context<'_>) -> Result<(), Error> {
     match get_top() {
         Ok(response) => {
             if let Some(success_description) = response.success_description {
@@ -159,7 +159,7 @@ pub async fn top10(ctx: Context<'_>) -> Result<(), Error> {
 }
 
 #[command(slash_command, prefix_command)]
-pub async fn top10_tournament(
+pub async fn poker_top10_tournament(
     ctx: Context<'_>,
     #[description = "Insert Date tournament (DD/MM/YYYY)"] fecha: String,
 ) -> Result<(), Error> {
@@ -215,7 +215,7 @@ pub async fn top10_tournament(
 }
 
 #[command(slash_command, prefix_command)]
-pub async fn update_tables(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn admin_update_tables(ctx: Context<'_>) -> Result<(), Error> {
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
 

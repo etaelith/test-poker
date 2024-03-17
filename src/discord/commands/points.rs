@@ -10,7 +10,7 @@ use crate::{
 use poise::{command, serenity_prelude::User};
 
 #[command(slash_command, prefix_command)]
-pub async fn sum_points(
+pub async fn admin_sum_points(
     ctx: Context<'_>,
     #[description = "Points (1-100)"] points: u32,
     #[description = "User (mention or ID)"] user: Option<User>,
@@ -77,7 +77,7 @@ pub async fn sum_points(
     Ok(())
 }
 #[command(slash_command, prefix_command)]
-pub async fn substract_points(
+pub async fn admin_substract_points(
     ctx: Context<'_>,
 
     #[description = "Points discount (1-100)"] points: u32,
@@ -153,7 +153,7 @@ pub async fn substract_points(
     Ok(())
 }
 #[command(slash_command, prefix_command)]
-pub async fn delete_points(
+pub async fn admin_delete_points(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user: Option<User>,
     #[description = "Insert Date tournament (DD/MM/YYYY)"] fecha: String,

@@ -6,7 +6,7 @@ use crate::{
 use poise::{command, serenity_prelude::User};
 
 #[command(slash_command, prefix_command)]
-pub async fn give_bounty(
+pub async fn admin_give_bounty(
     ctx: Context<'_>,
     #[description = "Amount (1-100)"] points: u32,
     #[description = "User (mention or ID)"] user: Option<User>,

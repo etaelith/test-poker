@@ -5,7 +5,7 @@ use crate::{
 };
 use poise::{command, serenity_prelude::User};
 #[command(slash_command, prefix_command)]
-pub async fn agree_boss(
+pub async fn admin_agree_boss(
     ctx: Context<'_>,
     #[description = "User (mention or ID)"] user: Option<User>,
 ) -> Result<(), Error> {
@@ -37,23 +37,4 @@ pub async fn agree_boss(
         send_message(&ctx, format!("No sos el owner del discord")).await?;
     }
     Ok(())
-}
-
-#[command(slash_command, prefix_command)]
-pub async fn test_test(ctx: Context<'_>) -> Result<(), Error> {
-    match ctx.author_member().await {
-        Some(member) => {
-            // Aquí puedes imprimir o hacer lo que necesites con el `Member`
-            println!("{:?}", member);
-
-            // Resto de tu lógica aquí...
-
-            Ok(())
-        }
-        None => {
-            // Manejar el caso en que no se encuentra un miembro
-            println!("No se encontró el miembro");
-            Ok(())
-        }
-    }
 }

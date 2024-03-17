@@ -1,8 +1,11 @@
-use crate::data_structs::{Context, Error};
+use crate::{
+    data_structs::{Context, Error, VerifyBitmex},
+    db::commands::table_users::verified_bitmex,
+};
 use hmac::{Hmac, Mac, NewMac};
 use poise::{
     command,
-    serenity_prelude::{ButtonStyle, CreateActionRow, CreateButton},
+    serenity_prelude::{ButtonStyle, ComponentInteractionCollector, CreateActionRow, CreateButton},
     CreateReply,
 };
 use reqwest::header::HeaderMap;
@@ -13,7 +16,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 #[command(slash_command, prefix_command)]
-pub async fn verify_twitch(ctx: Context<'_>) -> Result<(), Error> {
+pub async fn poker_verify_twitch(ctx: Context<'_>) -> Result<(), Error> {
     let client_id = env::var("CLIENT_ID").expect("CLIENT_ID not set");
     let url_auth = format!("https://discord.com/oauth2/authorize?client_id={}&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A1500%2Fapi%2Fauth%2Fdiscord%2Fredirect&scope=identify+connections", client_id);
     // Crea un mensaje con un botón y un enlace
@@ -32,12 +35,56 @@ pub async fn verify_twitch(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(reply).await?;
     Ok(())
 }
+#[poise::command(prefix_command, slash_command)]
+pub async fn poker_verify_bitmex(ctx: Context<'_>) -> Result<(), Error> {
+    let reply = {
+        let components = vec![CreateActionRow::Buttons(vec![CreateButton::new(
+            "verify_bitmex",
+        )
+        .label("Verify")
+        .style(ButtonStyle::Success)])];
 
-pub async fn call_verify_bitmex(
+        poise::CreateReply::default()
+            .ephemeral(true)
+            .content("Click the button below to verify bitmex")
+            .components(components)
+    };
+
+    ctx.send(reply).await?;
+
+    while let Some(mci) = ComponentInteractionCollector::new(ctx.serenity_context())
+        .timeout(std::time::Duration::from_secs(120))
+        .filter(move |mci| mci.data.custom_id == "verify_bitmex")
+        .await
+    {
+        let data =
+            poise::execute_modal_on_component_interaction::<VerifyBitmex>(ctx, mci, None, None)
+                .await?;
+        if let Some(data) = &data {
+            let api_key = &data.api_key;
+            let api_secret = &data.api_secret;
+            let id_user = ctx.author().id;
+            let tag_user = &ctx.author().name;
+            let _ = call_verify_bitmex(
+                api_key.to_string(),
+                api_secret.to_string(),
+                id_user.into(),
+                tag_user,
+            )
+            .await;
+        } else {
+            println!("No se recibieron datos de la interacción del componente");
+        }
+    }
+    Ok(())
+}
+async fn call_verify_bitmex(
     api_key: String,
     api_secret: String,
+    id_user: i64,
+    tag_user: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let guild_id = env::var("GUILD_ID").expect("GUILD_ID not set");
+    let guild_id = env::var("GUILD_ID_BITMEX").expect("GUILD_ID_BITMEX not set");
 
     let url = "https://www.bitmex.com/api/v1/user";
     let path = "/api/v1/user";
@@ -71,6 +118,7 @@ pub async fn call_verify_bitmex(
                         let account_name = account["name"].as_str().unwrap_or("N/A");
                         println!("ID de la cuenta buscada: {}", id);
                         println!("Nombre de la cuenta: {}", account_name);
+                        let _ = verified_bitmex(id_user, true, tag_user);
                         break;
                     }
                 }
