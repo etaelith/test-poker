@@ -75,7 +75,6 @@ pub fn get_user_info(tag_user: &str, id_user: i64) -> Result<ResponseStatus, rus
         Err(conn_err) => Err(conn_err),
     }
 }
-
 pub fn verified_bitmex(
     id_user: i64,
     state: bool,
@@ -90,7 +89,7 @@ pub fn verified_bitmex(
         )?;
         Ok(ResponseStatus {
             success: true,
-            success_description: Some(format!("Tournament Registred")),
+            success_description: Some(format!("Bitmex verified!")),
             error_message: None,
         })
     } else {
@@ -100,7 +99,17 @@ pub fn verified_bitmex(
                 "UPDATE users SET bitmex = ?1 WHERE user_id = ?2",
                 params![state, id_user],
             )?;
+            Ok(ResponseStatus {
+                success: true,
+                success_description: Some(format!("Bitmex verified!")),
+                error_message: None,
+            })
+        } else {
+            Ok(ResponseStatus {
+                success: false,
+                success_description: None,
+                error_message: Some(format!("Error insertando el usuario")),
+            })
         }
-        insert_result
     }
 }

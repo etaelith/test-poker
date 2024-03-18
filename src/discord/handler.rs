@@ -41,7 +41,7 @@ impl EventHandler for Handler {
                                 if let Some(embeds) = pinned_msg.embeds.first() {
                                     if embeds.title == Some("Top 10 Usuarios".to_string()) {
                                         if let Err(why) = pinned_msg.unpin(&ctx.http).await {
-                                            println!("Error despineando el mensaje: {:?}", why);
+                                            eprintln!("Error despineando el mensaje: {:?}", why);
                                         }
                                         break;
                                     }
@@ -52,11 +52,11 @@ impl EventHandler for Handler {
                         match msg.channel_id.send_message(&ctx.http, builder).await {
                             Ok(new_msg) => {
                                 if let Err(why) = new_msg.pin(&ctx.http).await {
-                                    println!("Error pineando el mensaje: {:?}", why);
+                                    eprintln!("Error pineando el mensaje: {:?}", why);
                                 }
                             }
                             Err(why) => {
-                                println!("Error enviando el mensaje: {:?}", why);
+                                eprintln!("Error enviando el mensaje: {:?}", why);
                             }
                         }
                     } else {
@@ -64,12 +64,12 @@ impl EventHandler for Handler {
                             CreateMessage::new().content("Error al obtener el top 10 de usuarios");
                         let msg = msg.channel_id.send_message(&ctx.http, builder).await;
                         if let Err(why) = msg {
-                            println!("Error enviando el mensaje: {:?}", why);
+                            eprintln!("Error enviando el mensaje: {:?}", why);
                         }
                     }
                 }
                 Err(err) => {
-                    println!("Error al conectar a la base de datos: {:?}", err);
+                    eprintln!("Error al conectar a la base de datos: {:?}", err);
                 }
             }
         }

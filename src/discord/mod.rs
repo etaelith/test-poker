@@ -9,7 +9,7 @@ use poise::{
 use crate::{data_structs::Data, db::config::setup_database};
 
 use self::commands::{
-    test::poker_verify,
+    guide::poker_verify,
     verify::{poker_verify_bitmex, poker_verify_twitch},
 };
 

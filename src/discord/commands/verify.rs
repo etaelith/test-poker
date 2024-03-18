@@ -1,6 +1,7 @@
 use crate::{
-    data_structs::{Context, Error, VerifyBitmex},
+    data_structs::{Context, Error, ResponseStatus, VerifyBitmex},
     db::commands::table_users::verified_bitmex,
+    discord::utils::send_message,
 };
 use hmac::{Hmac, Mac, NewMac};
 use poise::{
@@ -35,7 +36,7 @@ pub async fn poker_verify_twitch(ctx: Context<'_>) -> Result<(), Error> {
     ctx.send(reply).await?;
     Ok(())
 }
-#[poise::command(prefix_command, slash_command)]
+#[poise::command(prefix_command, slash_command, dm_only = true)]
 pub async fn poker_verify_bitmex(ctx: Context<'_>) -> Result<(), Error> {
     let reply = {
         let components = vec![CreateActionRow::Buttons(vec![CreateButton::new(
@@ -65,17 +66,28 @@ pub async fn poker_verify_bitmex(ctx: Context<'_>) -> Result<(), Error> {
             let api_secret = &data.api_secret;
             let id_user = ctx.author().id;
             let tag_user = &ctx.author().name;
-            let _ = call_verify_bitmex(
+            match call_verify_bitmex(
                 api_key.to_string(),
                 api_secret.to_string(),
                 id_user.into(),
                 tag_user,
             )
-            .await;
+            .await
+            {
+                Ok(datos) => {
+                    let _ = send_message(&ctx, datos.success_description.unwrap());
+                }
+                Err(err) => {
+                    println!("{}", err)
+                }
+            }
+
+            let _ = send_message(&ctx, "Bitmex verificado".to_string());
         } else {
             println!("No se recibieron datos de la interacción del componente");
         }
     }
+
     Ok(())
 }
 async fn call_verify_bitmex(
@@ -83,7 +95,7 @@ async fn call_verify_bitmex(
     api_secret: String,
     id_user: i64,
     tag_user: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<ResponseStatus, Box<dyn std::error::Error>> {
     let guild_id = env::var("GUILD_ID_BITMEX").expect("GUILD_ID_BITMEX not set");
 
     let url = "https://www.bitmex.com/api/v1/user";
@@ -109,7 +121,6 @@ async fn call_verify_bitmex(
     if response.status().is_success() {
         let body = response.text().await?;
         let json: Value = serde_json::from_str(&body)?;
-        let user_id = json["id"].as_i64().unwrap();
         let target_account_id: i64 = guild_id.parse().unwrap();
         if let Some(accounts) = json["accounts"].as_array() {
             for account in accounts {
@@ -118,16 +129,25 @@ async fn call_verify_bitmex(
                         let account_name = account["name"].as_str().unwrap_or("N/A");
                         println!("ID de la cuenta buscada: {}", id);
                         println!("Nombre de la cuenta: {}", account_name);
-                        let _ = verified_bitmex(id_user, true, tag_user);
-                        break;
+                        match verified_bitmex(id_user, true, tag_user) {
+                            Ok(datos) => {
+                                return Ok(datos);
+                            }
+                            Err(_) => {
+                                eprintln!("Error")
+                            }
+                        };
                     }
                 }
             }
         }
-        println!("user_id: {}", user_id);
     } else {
-        println!("Error: {}", response.status());
+        eprintln!("Error: {}", response.status());
     }
 
-    Ok(())
+    Ok(ResponseStatus {
+        success: true,
+        success_description: Some(format!("Bitmex verified2!")),
+        error_message: None,
+    })
 }

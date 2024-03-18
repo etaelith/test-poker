@@ -29,11 +29,8 @@ async fn redirect(req: web::Query<HashMap<String, String>>) -> impl Responder {
                                 .iter()
                                 .find(|conn| conn.connection_type == "twitch")
                             {
-                                println!("{}", twitch_connection.name);
-
                                 match get_user_data(&access).await {
                                     Ok(user) => {
-                                        println!("{}", user.id);
                                         match insert_twitch(
                                             user.id.into(),
                                             user.name.to_string(),

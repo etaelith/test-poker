@@ -36,7 +36,7 @@ pub fn insert_reward(
             }
         }
         Err(conn_err) => {
-            println!("Error: {}", conn_err)
+            eprintln!("Error: {}", conn_err)
         }
     }
     Ok(ResponseStatus {
@@ -68,7 +68,7 @@ pub fn substract_reward(
             }
         }
         Err(conn_err) => {
-            println!("Error: {}", conn_err)
+            eprintln!("Error: {}", conn_err)
         }
     }
     Ok(ResponseStatus {
@@ -104,7 +104,7 @@ pub fn delete_reward(user_id: i64, tournament_id: i64) -> Result<ResponseStatus,
             }
         }
         Err(conn_err) => {
-            println!("Error: {}", conn_err)
+            eprintln!("Error: {}", conn_err)
         }
     }
     Ok(ResponseStatus {

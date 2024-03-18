@@ -243,23 +243,23 @@ pub async fn admin_update_tables(ctx: Context<'_>) -> Result<(), Error> {
 
                     let msg = ctx.channel_id().send_message(&ctx.http(), builder).await;
                     if let Err(why) = msg {
-                        println!("Error sending message: {:?}", why);
+                        eprintln!("Error sending message: {:?}", why);
                     }
                 } else {
                     let builder =
                         CreateMessage::new().content("Error al obtener el top 10 de usuarios");
                     let msg = ctx.channel_id().send_message(&ctx.http(), builder).await;
                     if let Err(why) = msg {
-                        println!("Error sending message: {:?}", why);
+                        eprintln!("Error sending message: {:?}", why);
                     }
                 }
             }
             Err(err) => {
-                println!("Error al conectar a la base de datos: {:?}", err);
+                eprintln!("Error al conectar a la base de datos: {:?}", err);
             }
         },
         Ok(false) => println!("Role'nt checked: false -"),
-        Err(e) => println!("Error checking role: {:?}", e),
+        Err(e) => eprintln!("Error checking role: {:?}", e),
     }
 
     Ok(())
@@ -272,7 +272,7 @@ pub async fn checking(ctx: Context<'_>) -> Result<(), Error> {
     match checked {
         Ok(true) => println!("Role checked: true -"),
         Ok(false) => println!("Role'nt checked: false -"),
-        Err(e) => println!("Error checking role: {:?}", e),
+        Err(e) => eprintln!("Error checking role: {:?}", e),
     }
     Ok(())
 }
