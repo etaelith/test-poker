@@ -59,7 +59,11 @@ To deploy this project run
 ```
 
 ```bash
-   DISCORD_TOKEN=<value> CLIENT_ID=<value> CLIENT_SECRET=<value> PORT=<value> cargo run
+   source variables_env.sh
+```
+
+```bash
+    cargo run
 ```
 
 ## Discord msg handler
@@ -75,19 +79,19 @@ To deploy this project run
 #### GET TOURNAMENTS
 
 ```http
-   /get_tournaments
+   /poker_get_tournaments
 ```
 
 #### TOP 10 tournament
 
 ```http
-   /top10
+   /poker_top10
 ```
 
 #### Tournament ID TOP 10
 
 ```http
-   /top10_tournament ${fecha}
+   /poker_top10_tournament ${fecha}
 ```
 
 | Parameter | Type         | Description                      |
@@ -97,7 +101,7 @@ To deploy this project run
 #### GET user (rank & points)
 
 ```http
-   /search_user ${user}
+   /poker_search_user ${user}
 ```
 
 | Parameter | Type     | Description                    |
@@ -107,7 +111,7 @@ To deploy this project run
 #### GET user_info (general data)
 
 ```http
-   /info_user ${user}
+   /poker_info_user ${user}
 ```
 
 | Parameter | Type     | Description                    |
@@ -117,7 +121,7 @@ To deploy this project run
 #### Create Tournament
 
 ```http
-  /create_tournament ${fecha} ROLE NEEDED
+  /admin_create_tournament ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -127,7 +131,7 @@ To deploy this project run
 #### Create guild_boss
 
 ```http
-  /agree_boss ${user} ROLE NEEDED ONLY OWNER
+  /admin_agree_boss ${user} ROLE NEEDED ONLY OWNER
 ```
 
 | Parameter | Type     | Description                    |
@@ -137,7 +141,7 @@ To deploy this project run
 #### Sumarized Points
 
 ```http
-   /sum_points ${points} ${user} ${fecha} ROLE NEEDED
+   /admin_sum_points ${points} ${user} ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -149,7 +153,7 @@ To deploy this project run
 #### Substract points
 
 ```http
-   /substract_points ${points} ${user} ${fecha} ROLE NEEDED
+   /admin_substract_points ${points} ${user} ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -161,7 +165,7 @@ To deploy this project run
 #### Delete points
 
 ```http
-   /delete_points ${user} ${fecha} ROLE NEEDED
+   /admin_delete_points ${user} ${fecha} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                      |
@@ -173,7 +177,7 @@ To deploy this project run
 #### Give bounty
 
 ```http
-   /give_bounty ${points} ${user} ${fecha} ${win} ROLE NEEDED
+   /admin_give_bounty ${points} ${user} ${fecha} ${win} ROLE NEEDED
 ```
 
 | Parameter | Type         | Description                                     |
@@ -183,16 +187,28 @@ To deploy this project run
 | `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                |
 | `win`     | `Bool`       | **Required**. Win tournament TRUE, Bounty FALSE |
 
+#### Guide verify bitmex
+
+```http
+   /poker_verify
+```
+
 #### Verify twitch name
 
 ```http
-   /verify_twitch
+   /poker_verify_twitch
+```
+
+#### Verify bitmex user
+
+```http
+   /poker_verify_bitmex ONLY DM
 ```
 
 #### Give verified bitmex manual
 
 ```http
-   /verifed ${user} ${verify} ROLE NEEDED
+   /admin_verifed ${user} ${verify} ROLE NEEDED
 ```
 
 | Parameter | Type     | Description                                       |
