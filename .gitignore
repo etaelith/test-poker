@@ -1,3 +1,4 @@
 /target
 .env
 variables_env.sh
+docker-compose.yml

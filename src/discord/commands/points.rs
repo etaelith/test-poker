@@ -91,7 +91,6 @@ pub async fn admin_substract_points(
         Ok(true) => {
             if points < 1 || points > 100 {
                 send_message(&ctx, format!("Please choose points between 1 and 100.")).await?;
-                return Ok(());
             }
 
             let target_user = user.unwrap_or_else(|| ctx.author().clone());

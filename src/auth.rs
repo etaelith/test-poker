@@ -9,20 +9,21 @@ async fn redirect(req: web::Query<HashMap<String, String>>) -> impl Responder {
     if let Some(code) = req.get("code") {
         let client_id = env::var("CLIENT_ID").expect("CLIENT_ID not set");
         let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET not set");
-        let redirect_uri = "http://localhost:1500/api/auth/discord/redirect";
-
+        let port = env::var("PORT").expect("PORT not set");
+        let redirect_uri = format!("http://localhost:{}/api/auth/discord/redirect", port);
         let mut params = std::collections::HashMap::new();
         params.insert("client_id".to_string(), client_id);
         params.insert("client_secret".to_string(), client_secret);
         params.insert("grant_type".to_string(), "authorization_code".to_string());
         params.insert("code".to_string(), code.clone());
         params.insert("redirect_uri".to_string(), redirect_uri.to_string());
-
+        print!("Hola");
         match get_oauth_token(&params).await {
             Ok(output) => {
+                print!("Hola");
                 if let Some(access) = output.get("access_token").and_then(|v| v.as_str()) {
                     let access = access.to_string();
-
+                    print!("Hola");
                     match get_user_connections(&access).await {
                         Ok(connections) => {
                             if let Some(twitch_connection) = connections
@@ -37,7 +38,7 @@ async fn redirect(req: web::Query<HashMap<String, String>>) -> impl Responder {
                                             twitch_connection.name.to_string(),
                                         ) {
                                             Ok(_) => {
-                                                // Successfully handled redirect
+                                                print!("success redirect")
                                             }
                                             Err(e) => {
                                                 eprintln!("Error handling redirect: {}", e);

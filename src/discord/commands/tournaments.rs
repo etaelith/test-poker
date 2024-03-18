@@ -24,53 +24,43 @@ pub async fn admin_create_tournament(
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
     match checked {
-        Ok(true) => {
-            match parse_fecha(&fecha) {
-                Ok(epoch_time) => {
-                    // Verificar la existencia del torneo antes de intentar crearlo
-                    match tournament_exists(epoch_time) {
-                        Ok(false) => {
-                            let conn = connect_database().unwrap();
-                            match add_tournament(&conn, epoch_time) {
-                                Ok(_) => {
-                                    send_message(
-                                        &ctx,
-                                        format!("Torneo creado con éxito para la fecha: {}", fecha),
-                                    )
-                                    .await?;
-                                }
-                                Err(err) => {
-                                    send_message(
-                                        &ctx,
-                                        format!("Hubo un error al crear el torneo: {err}"),
-                                    )
-                                    .await?;
-                                }
-                            }
-                        }
-                        Ok(true) => {
-                            send_message(&ctx, format!("El torneo ya existe.")).await?;
-                        }
-                        Err(err) => {
+        Ok(true) => match parse_fecha(&fecha) {
+            Ok(epoch_time) => match tournament_exists(epoch_time) {
+                Ok(false) => {
+                    let conn = connect_database().unwrap();
+                    match add_tournament(&conn, epoch_time) {
+                        Ok(_) => {
                             send_message(
                                 &ctx,
-                                format!(
-                                    "Hubo un error al verificar la existencia del torneo: {err}"
-                                ),
+                                format!("Torneo creado con éxito para la fecha: {}", fecha),
                             )
                             .await?;
                         }
+                        Err(err) => {
+                            send_message(&ctx, format!("Hubo un error al crear el torneo: {err}"))
+                                .await?;
+                        }
                     }
                 }
-                Err(_) => {
+                Ok(true) => {
+                    send_message(&ctx, format!("El torneo ya existe.")).await?;
+                }
+                Err(err) => {
                     send_message(
                         &ctx,
-                        format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+                        format!("Hubo un error al verificar la existencia del torneo: {err}"),
                     )
                     .await?;
                 }
+            },
+            Err(_) => {
+                send_message(
+                    &ctx,
+                    format!("Fecha inválida. Asegúrate de usar el formato DD/MM/YYYY."),
+                )
+                .await?;
             }
-        }
+        },
         Ok(false) => {
             send_message(&ctx, format!("No tienes el rol necesario")).await?;
         }
@@ -243,23 +233,27 @@ pub async fn admin_update_tables(ctx: Context<'_>) -> Result<(), Error> {
 
                     let msg = ctx.channel_id().send_message(&ctx.http(), builder).await;
                     if let Err(why) = msg {
-                        eprintln!("Error sending message: {:?}", why);
+                        let _ = send_message(&ctx, why.to_string());
                     }
                 } else {
                     let builder =
                         CreateMessage::new().content("Error al obtener el top 10 de usuarios");
                     let msg = ctx.channel_id().send_message(&ctx.http(), builder).await;
                     if let Err(why) = msg {
-                        eprintln!("Error sending message: {:?}", why);
+                        let _ = send_message(&ctx, why.to_string());
                     }
                 }
             }
             Err(err) => {
-                eprintln!("Error al conectar a la base de datos: {:?}", err);
+                let _ = send_message(&ctx, err.to_string());
             }
         },
-        Ok(false) => println!("Role'nt checked: false -"),
-        Err(e) => eprintln!("Error checking role: {:?}", e),
+        Ok(false) => {
+            let _ = send_message(&ctx, "Role'nt checked: false -".to_string());
+        }
+        Err(e) => {
+            let _ = send_message(&ctx, e.to_string());
+        }
     }
 
     Ok(())
@@ -270,9 +264,15 @@ pub async fn checking(ctx: Context<'_>) -> Result<(), Error> {
     let role_str = std::env::var("ROLE_ADMIN").expect("missing ID ROLE ADMIN");
     let checked = check_role(&ctx, role_str).await;
     match checked {
-        Ok(true) => println!("Role checked: true -"),
-        Ok(false) => println!("Role'nt checked: false -"),
-        Err(e) => eprintln!("Error checking role: {:?}", e),
+        Ok(true) => {
+            let _ = send_message(&ctx, "Role checked: true -".to_string());
+        }
+        Ok(false) => {
+            let _ = send_message(&ctx, "Role checked: false".to_string());
+        }
+        Err(e) => {
+            let _ = send_message(&ctx, e.to_string());
+        }
     }
     Ok(())
 }

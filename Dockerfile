@@ -33,4 +33,4 @@ ENV PORT=1500
 
 CMD [ "./idiotita-poker" ]
 
-# docker run -e DISCORD_TOKEN=<value> CLIENT_ID=<value> CLIENT_SECRET=<value> <containerImage>
+# docker run -e DISCORD_TOKEN=<value> CLIENT_ID=<value> CLIENT_SECRET=<value> GUILD_ID_BITMEX=<value> <containerImage>

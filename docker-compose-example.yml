@@ -1,0 +1,17 @@
+services:
+  idiotita-poker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "1500:1500"
+    environment:
+      - DISCORD_TOKEN=
+      - CLIENT_ID=
+      - CLIENT_SECRET=
+      - GUILD_ID_BITMEX=
+      - DB_PATH=
+      - PORT=
+      - ROLE_ADMIN=
+    volumes:
+      - ./data:/app/data
