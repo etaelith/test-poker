@@ -2,3 +2,5 @@
 .env
 variables_env.sh
 docker-compose.yml
+Dockerfile
+docker-compose-example.yml
