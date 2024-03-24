@@ -31,7 +31,7 @@ pub struct Connection {
     pub name: String,
 }
 #[derive(Debug, poise::Modal)]
-#[allow(dead_code)] // fields only used for Debug print
+#[allow(dead_code)]
 pub struct VerifyBitmex {
     pub api_key: String,
     pub api_secret: String,

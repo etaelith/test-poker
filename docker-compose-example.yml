@@ -1,10 +1,20 @@
 services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - data:/data
+      - letsencrypt:/etc/letsencrypt
   idiotita-poker:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "1500:1500"
+    expose:
+      - "1500"
     environment:
       - DISCORD_TOKEN=
       - CLIENT_ID=
@@ -14,4 +24,21 @@ services:
       - PORT=
       - ROLE_ADMIN=
     volumes:
-      - ./data:/app/data
+      - data-volume:/app/data
+  twitch-auth:
+    image: twitch-auth:latest
+    restart: unless-stopped
+    expose:
+      - "3000"
+    environment:
+      - PORT=
+      - CLIENT_ID=
+      - CLIENT_SECRET=
+      - URL_URI=
+      - DB_PATH=
+    volumes:
+      - data-volume:/app/data
+volumes:
+  data-volume:
+  data:
+  letsencrypt:

@@ -114,7 +114,7 @@ pub fn insert_twitch_tag(
     }
 }
 
-pub fn insert_twitch(
+/* pub fn insert_twitch(
     user_id: i64,
     user_name: String,
     twitch_connection_name: String,
@@ -152,3 +152,4 @@ pub fn insert_twitch(
         }
     }
 }
+ */
