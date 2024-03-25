@@ -25,12 +25,17 @@ pub fn tournament_exists(tournament_date: i64) -> Result<bool, rusqlite::Error> 
         Err(e) => Err(e),
     }
 }
-pub fn insert_idiot(conn: &Connection, id_user: i64, tag_user: &str) -> Result<ResponseStatus> {
+pub fn insert_idiot(
+    conn: &Connection,
+    id_user: i64,
+    tag_user: &str,
+    guild_id: i64,
+) -> Result<ResponseStatus> {
     match user_exists(conn, id_user){
         Ok(true) => {
             match idiot_exists(conn, id_user){
                 Ok(false) => {
-                    match conn.execute("INSERT INTO bosses (user_id, user_name, created_at,updated_at) VALUES (?1, ?2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP", params![id_user,tag_user],){
+                    match conn.execute("INSERT INTO bosses (user_id, user_name, guild_id, created_at,updated_at) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", params![id_user,tag_user,guild_id],){
                         Ok(_) => Ok(ResponseStatus {
                             success: true,
                             success_description: Some(format!("Idiotita spawn")),
@@ -59,7 +64,7 @@ pub fn insert_idiot(conn: &Connection, id_user: i64, tag_user: &str) -> Result<R
         }
         Ok(false) => {
             let _ = insert_user(conn, id_user, tag_user);
-            match conn.execute("INSERT INTO bosses (user_id, user_name, created_at,updated_at) VALUES (?1, ?2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", params![id_user,tag_user],){
+            match conn.execute("INSERT INTO bosses (user_id, user_name, guild_id, created_at,updated_at) VALUES (?1, ?2, ?3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)", params![id_user,tag_user,guild_id],){
                 Ok(_) => Ok(ResponseStatus {
                     success: true,
                     success_description: Some(format!("Idiotita spawn")),
