@@ -7,7 +7,7 @@ pub fn setup_database() -> Result<Connection> {
         id INTEGER PRIMARY KEY,
         user_name TEXT NOT NULL,
         user_id INTEGER NOT NULL UNIQUE,
-        points INTEGER,
+        points INTEGER DEFAULT 0,
         bitmex BOOLEAN DEFAULT 0,
         created_at TIMESTAMP,
         wins INTEGER DEFAULT 0,
@@ -52,8 +52,19 @@ pub fn setup_database() -> Result<Connection> {
 
         CREATE UNIQUE INDEX idx_bounty_winner ON bounties (tournament_id) WHERE bounty_winner = 1;
         CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('0823Hz', 14512, '0823Hz');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('PrLogy', 23542, 'PrLogy');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('kolksm', 31235, 'kolksm');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('ch_raposo', 45112, 'ch_raposo');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('gafo', 553423, 'gafo');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('Joli', 6125612, 'Joli');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('KiddGere', 7512331, 'KiddGere');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('Santunax', 865431, 'Santunax');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('guacho', 94321, 'guacho');
+        INSERT INTO users (user_name, user_id, user_twitch) VALUES ('kuiserr', 1014123, 'UniqueTwitchName');
       ",
     )?;
+    // Insert users
 
     conn.is_autocommit();
     println!("DB config check");

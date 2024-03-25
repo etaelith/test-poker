@@ -113,7 +113,7 @@ pub fn delete_reward(user_id: i64, tournament_id: i64) -> Result<ResponseStatus,
         error_message: None,
     })
 }
-fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
+pub fn update_points(user_id: i64) -> Result<ResponseStatus, rusqlite::Error> {
     match connect_database() {
         Ok(conn) => {
             match conn.execute(

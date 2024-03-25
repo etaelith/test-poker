@@ -45,11 +45,7 @@ To learn more about the technologies used in this project, you can check out the
 To deploy this project run
 
 ```bash
-  docker build -t <project_name> .
-```
-
-```bash
-  docker run -e DISCORD_TOKEN=<value> <containerImage>
+  docker-compose up -d --build
 ```
 
 ### Cargo
@@ -117,6 +113,48 @@ To deploy this project run
 | Parameter | Type     | Description                    |
 | :-------- | :------- | :----------------------------- |
 | `user`    | `string` | **Required**. ID/@Mention user |
+
+#### Guide verify bitmex
+
+```http
+   /poker_verify
+```
+
+#### Verify twitch name
+
+```http
+   /poker_verify_twitch
+```
+
+#### Verify bitmex user
+
+```http
+   /poker_verify_bitmex ONLY DM
+```
+
+## Owner server commands
+
+#### Give verified bitmex manual
+
+```http
+   /admin_verify_bitmex ${user} ${verify} ROLE NEEDED
+```
+
+| Parameter | Type     | Description                                       |
+| :-------- | :------- | :------------------------------------------------ |
+| `user`    | `string` | **Required**. ID/@Mention user                    |
+| `verify`  | `Bool`   | **Required**. Checked on bitmex TRUE or not FALSE |
+
+#### Give verified twitch manual
+
+```http
+   /admin_verify_twitch ${user} ${user_twitch} ROLE NEEDED
+```
+
+| Parameter | Type     | Description                    |
+| :-------- | :------- | :----------------------------- |
+| `user`    | `string` | **Required**. ID/@Mention user |
+| `verify`  | `string` | **Required**. Tag User         |
 
 #### Create Tournament
 
@@ -186,35 +224,6 @@ To deploy this project run
 | `user`    | `string`     | **Required**. ID/@Mention user                  |
 | `fecha`   | `DD/MM/YYYY` | **Required**. Date of tournament                |
 | `win`     | `Bool`       | **Required**. Win tournament TRUE, Bounty FALSE |
-
-#### Guide verify bitmex
-
-```http
-   /poker_verify
-```
-
-#### Verify twitch name
-
-```http
-   /poker_verify_twitch
-```
-
-#### Verify bitmex user
-
-```http
-   /poker_verify_bitmex ONLY DM
-```
-
-#### Give verified bitmex manual
-
-```http
-   /admin_verifed ${user} ${verify} ROLE NEEDED
-```
-
-| Parameter | Type     | Description                                       |
-| :-------- | :------- | :------------------------------------------------ |
-| `user`    | `string` | **Required**. ID/@Mention user                    |
-| `verify`  | `Bool`   | **Required**. Checked on bitmex TRUE or not FALSE |
 
 ## SQL
 
@@ -289,3 +298,8 @@ CREATE UNIQUE INDEX idx_reward ON reward (tournament_id, user_id);
 #### Weird shit
 
 - [ErrorPath](https://stackoverflow.com/questions/7250130/how-to-stop-mingw-and-msys-from-mangling-path-names-given-at-the-command-line/34386471#34386471)
+
+#### stuff
+
+- [LINK](https://www.crosstalksolutions.com/cloudflare-tunnel-easy-setup/)
+- [LINK2](https://matthewtejo.substack.com/p/building-robust-server-with-async)
